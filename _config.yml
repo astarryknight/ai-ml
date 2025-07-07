@@ -1,5 +1,6 @@
 title: AI/ML
 description: Artificial Intelligence & Machine Learning curriculum for NJIT's IEEE student branch.
 theme: just-the-docs
+math: katex
 
 url: https://astarryknight.github.io/ai-ml
