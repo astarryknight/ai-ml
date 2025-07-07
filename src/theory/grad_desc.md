@@ -3,6 +3,7 @@ layout: post
 title:  2. Optimization & Gradient Descent
 parent: Theory
 nav_order: 3
+layout: katex
 ---
 
 ## Linear Regression
@@ -21,9 +22,7 @@ There is actually a really easy way to calculate the regression line, or line of
 
 **Gradient** - a vector that points in the direction of the steepest increase of a function at a specific point
 
-For a function of multiple variables, such as $f(x, y, z)$, the gradient is represented as the vector $\nabla f$, and its components are:
+For a function of multiple variables, such as $$f(x, y, z)$$, the gradient is represented as the vector $$\nabla f$$, and its components are:
 
-$
-\nabla f = \left[ \frac{\partial f}{\partial x}, \frac{\partial f}{\partial y}, \frac{\partial f}{\partial z} \right]$
-
-$x$
+$$
+\nabla f = \left[ \frac{\partial f}{\partial x}, \frac{\partial f}{\partial y}, \frac{\partial f}{\partial z} \right]$$
