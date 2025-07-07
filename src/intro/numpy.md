@@ -26,6 +26,7 @@ To create an array, we can do the following:
 ```python
 arr1 = np.array([1,2,3,4,5])
 ```
+----
 
 ### Axes, Shape, and Data Type
 ![Numpy Arrays & Axes](../res/numpy_arr_axis.png)
@@ -68,6 +69,7 @@ arr_3d = np.array([
 print(arr_3d)
 ```
 
+----
 
 ### Slicing and Indexing
 We can access elements in the matrix using **indexing**.
@@ -112,6 +114,7 @@ mask = np.array([False, True, False, True, False])
 arr_1D[mask]
 ```
 
+----
 
 ### Useful Array Functions
 ***ndim*** - check the number of dimensions in an array
@@ -192,6 +195,8 @@ arr = np.random.randint(low=1, high=8, size=(2,4)) # Range: lower=1(inclusive), 
 
 ***np.linalg.det()*** - Compute the determinant of a matrix.
 
+----
+
 ### Arithmetic Operations
 NumPy is capable of performing numerous arithmetic operations on matrices ```+,-,*,/```. These arithmetic operators are done by element, referred to as element-wise operations.
 
@@ -210,11 +215,14 @@ arr1 * arr2 #multiplication
 arr1 / arr2 #division
 ```
 
+----
+
 ### Broadcasting
 What if you want to use operations on mismatched arrays? In some cases, NumPy will **"broadcast"** an array to perform these operations. An array can be stretched in order to make it compatible for element-wise operations
 
 ![Broadcasting](../res/broadcasting.png)
 
+----
 
 ### Masks
 Masks and filters allow us to make conditions for selecting values from a matrix using boolean indexing. Here are some examples.

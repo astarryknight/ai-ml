@@ -4,4 +4,5 @@ title:  Theory
 nav_order: 5
 ---
 
-## why what how is this?
+## Theory
+Here, you will learn the conceptual and mathematical framework that powers machine learning and artificial intelligence.
