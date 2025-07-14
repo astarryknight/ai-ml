@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  Component Testing
-nav_order: 6
+nav_order: 8
 ---
 
 ### Button

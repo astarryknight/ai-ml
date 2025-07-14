@@ -1,8 +1,8 @@
 ---
 layout: post
-title:  2. Numpy
+title:  3. Numpy
 parent: Intro
-nav_order: 3
+nav_order: 4
 ---
 
 ## Intro to Python & Numpy
