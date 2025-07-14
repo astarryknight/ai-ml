@@ -343,3 +343,69 @@ The sigmoid activation function is used whenever we need the probabilities of 2 
 classifier.add(Dense(activation="sigmoid", units=1, kernel_initializer="uniform"))
 ```
 
+Compiling the ANN
+
+The Adam optimizer is a form of stochastic gradient descent. Luckily for you, this does all of the math behind the scenes.
+
+```python
+classifier.compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['accuracy'])
+```
+
+**Fitting the ANN to the Training set**
+
+This step will take some time for large epoch values. A batch size of 10 means that the weights will update after every 10 observations. Epoch is a round of whole data flow through the network.
+
+```python
+classifier.fit(X_train, y_train, batch_size = 10, epochs = 100)
+```
+
+---
+
+### Making predictions and evaluating the model
+
+```python
+y_pred = classifier.predict(X_test)
+```
+
+If y_pred is larger than 0.5, it returns true (1). Otherwise false (2). This determines what the neural network "voted" regarding this customer.
+
+```python
+y_pred = (y_pred > 0.5)
+```
+
+Making the Confusion Matrix.
+```python
+from sklearn.metrics import confusion_matrix
+cm = confusion_matrix(y_test, y_pred)
+print(cm)
+tn, fp, fn, tp = cm.ravel()
+accuracy = (tn + tp) / (tn + tp + fn + fp)
+print(accuracy)
+```
+
+```markdown
+[[1538   57]
+ [ 258  147]]
+0.8425
+```
+
+**Task: Play around with the batch size and epoch hyperparameters. Compare the accuracies**
+
+
+---
+
+### Predicting whether a new customer will stay at the bank
+
+Input: Two binary columns for geography, two binary columns for gender, credit score, age, tenure, balance, num products, has credit card, is active member, estimated salary
+
+```python
+#0 0 1 0 619 42 2 0 1 1 1 56700
+new_customer = [[0, 0, 1, 0, 619, 42, 2, 5000, 1, 1, 0, 50700]]
+new_customer = sc.transform(new_customer)
+new_prediction = classifier.predict(new_customer)
+print(new_prediction)
+```
+
+```markdown
+[[0.5705499]]
+```
