@@ -71,19 +71,19 @@ Our square trick optimizes the least squares cost function. For a given set of p
 **Pseudocode for Square Trick**
 
 **Input**:
-- A line with slope *m*, *y*-intercept *b*, and equation $\hat{p}$ = $mr + b$
-- A point with coordinates ($r$,$p$)
-- A small positive $n$ (our learning rate)
+- A line with slope *m*, *y*-intercept *b*, and equation $$\hat{p}$$ = $$mr + b$$
+- A point with coordinates ($$r$$,$$p$$)
+- A small positive $$n$$ (our learning rate)
 
 **Output**:
-- A line with equation $\hat{p}$ = $m'r + b'$ that is closer to the point
+- A line with equation $$\hat{p}$$ = $$m'r + b'$$ that is closer to the point
 
 **Procedure**:
-- Add *nr*($p-\hat{p}$) to the slope $m$. Obtain $m'= m+nr(p-\hat{p})$ (this changes the slope to get closer to the point).
-- Add *nr*($p-\hat{p}$) to the y-intercept $b$. Obtain $b'= b+n(p-\hat{p})$ (this translates the line to get closer to the point).
+- Add *nr*($$p-\hat{p}$$) to the slope $$m$$. Obtain $$m'= m+nr(p-\hat{p})$$ (this changes the slope to get closer to the point).
+- Add *nr*($$p-\hat{p}$$) to the y-intercept $$b$$. Obtain $$b'= b+n(p-\hat{p})$$ (this translates the line to get closer to the point).
 
 **Return**:
-The line with equation $\hat{p}$ = $m'r + b'$
+The line with equation $$\hat{p}$$ = $$m'r + b'$$
 
 ----
 
@@ -188,5 +188,4 @@ linear_regression(features, labels, learning_rate = 0.01, epochs = 2000) # We ca
 
 Currently, this only works with simple linear regression. If we want to do multiple linear regression, all we have to do is apply gradient descent to higher dimensions.
 
-
-LINK TO SPOTIFY MINI
+Now that you know the basics of machine learning and optimization, check out the [Spotify Recommendation Mini](https://astarryknight.github.io/ai-ml/src/minis/spotify.html)
