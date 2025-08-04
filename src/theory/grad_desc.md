@@ -7,7 +7,7 @@ layout: katex
 ---
 
 ## Linear Regression
-The most basic machine learning model is linear regression. This, like any other regrssion model, predicts for a continuous value. Since this is the most simple learning model, let's try to build it!
+The most basic machine learning model is linear regression. This, like any other regression model, predicts for a continuous value. Since this is the most simple learning model, let's try to build it!
 
 But first, what is linear regression?
 
