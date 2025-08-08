@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  6. Reinforcement Learning
+title:  5. Reinforcement Learning
 parent: Theory
 nav_order: 7
 layout: katex

@@ -1,12 +1,15 @@
 ---
 layout: post
-title:  4. Artificial Neural Networks
+title:  3. Artificial Neural Networks
 parent: Theory
 nav_order: 5
 layout: katex
 ---
 
 ## Artificial Neural Networks
+
+(based on [this textbook](https://www.google.com/books/edition/Grokking_Machine_Learning/fNhOEAAAQBAJ?hl=en&gbpv=0))
+
 Neural Networks are one of the most popular machine learning models. They are meant to **mimic how the brain operates**, and can end up being very complex. The field of neural networks is referred to as *Deep Learning*.
 
 Some important applications of Neural Networks are:

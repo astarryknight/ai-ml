@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  5. Natural Language Processing
+title:  4. Natural Language Processing
 parent: Theory
 nav_order: 6
 ---

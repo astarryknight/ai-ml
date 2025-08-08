@@ -6,6 +6,9 @@ nav_order: 3
 ---
 
 ## Artificial Neural Network
+
+(based on [this textbook](https://www.google.com/books/edition/Grokking_Machine_Learning/fNhOEAAAQBAJ?hl=en&gbpv=0))
+
 If you haven't learned how ANNs work, check out [this](https://astarryknight.github.io/ai-ml/src/theory/ann.html) lesson!
 
 ---
