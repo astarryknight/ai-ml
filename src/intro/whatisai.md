@@ -16,7 +16,7 @@ ML: subset of AI, algorithms making decisions through patterns from data (method
 In other words,
 > Ever wish your computer could be more like a savvy sidekick than a clueless sidekick? AI is the brainiac dreaming of understanding your vibes, and ML is its secret sauce – the tech making your computer less 'I follow orders' and more 'I've got this, boss!' It's the reason your tech is getting sassier and smarter.
 
-In order to start using AI/ML, **Data is crucial!** Quality of data IMPACT model performance and decision-making. From training to evaluation, data plays a central role in building reliable and effective AI systems. That is why we are looking into numpy and python today.
+In order to start using AI/ML, **Data is crucial!** Quality of data IMPACT model performance and decision-making. From training to evaluation, data plays a central role in building reliable and effective AI systems.
 
 ## Types of AI
 **Cognitive Modeling** - study in computer science that studies and attempts to simulate ***how*** humans think
