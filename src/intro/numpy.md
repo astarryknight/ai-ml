@@ -243,3 +243,17 @@ arr = np.array([[1,2,3,4],
 mask = (arr % 2) == 0
 arr[mask]
 ```
+
+--- 
+
+### Exercises:
+1. Import **numpy**
+2. Create a numpy array "a" of the numbers 1-10
+3. Reshape this array to be size (2,5), and print the new shape
+4. Transpose this array, and print out the new shape
+5. Multiply this array by 5, and save to array "b"
+6. Print the sum of the array "b"
+7. Print the index of the maximum value of the array "b"
+8. Generate an array "r" of random integers [0,20] with shape (1,10)
+9. Print values > 10 in "r"
+10. Print all the even numbers in "r"
