@@ -51,7 +51,7 @@ Broadly speaking, there are three families of machine learning models:
 - **Unsupervised learning**
 - **Reinforcement learning**
 
-We will be discussing only the first two: supervised and unsupervised learning
+We will be discussing only the first two: supervised and unsupervised learning (reinforcement learning will be covered later!)
 
 Huge surprise incoming: we will be talking about types of data again (hooray!)
 Recall that features are variables in our data that we consider to make predictions. These features will be key to understanding these two methods of machine learning.
@@ -158,10 +158,10 @@ Some clustering algroithms include:
 ----
 **Dimensionality Reduction**
 
-We discussed this a bit last meeting, so I won't go too much into it. But generally, dimensionality reduction is useful in simplifying the features/dimensionality of our data while conserving important aspects to it.
+Generally, dimensionality reduction is useful in simplifying the features/dimensionality of our data while conserving important aspects to it.
 
 Let's look at an example of a data set of people in a city. Suppose that each person has an address consisting of 5 features: street, building, floor, room, and distance from door. If our objective is to simply process data from the address of somebody in the city at a given moment, using all these features is not very useful. Realistically, we probably only need the street and building to suffice for an address since relatively few people will be in the exact same street and building at a given time. Thus, we *drop the 3 other features* to reduce down to only 2 dimensions from 5.
 
 ![Dimensionality Reduction](../res/dimensionality_reduction.png)
 
-And that does it for the basics! There are other techniques like reinforcemnt learning, online learning, and batch learning, so you can research more if you'd like.
+And that does it for the basics! There are other techniques like reinforcement learning, online learning, and batch learning, so you can research more if you'd like.

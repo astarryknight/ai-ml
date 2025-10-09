@@ -118,7 +118,7 @@ df['in_shazam_charts'] = df['in_shazam_charts'].replace(',','', regex=True)
 ```
 
 ```python
-df['in_shazam_charts'] = df['in_shazam_charts'].fillna(df['in_shazam_charts'].median()).astype(np.int64)
+df['in_shazam_charts'] = df['in_shazam_charts'].fillna(df['in_shazam_charts'].notnull().median()).astype(np.int64)
 ```
 
 ```python
@@ -359,12 +359,14 @@ dummies = pd.get_dummies(df['mode'],prefix="mode")
 
 df_encode = pd.concat([df, dummies], axis=1)
 
-dummies = pd.get_dummies(df['released_month'],prefix="released_month")
+#dummies = pd.get_dummies(df['released_month'],prefix="released_month")
 
-df_encode = pd.concat([df_encode, dummies], axis=1)
+#df_encode = pd.concat([df_encode, dummies], axis=1)
 
-df_encode.drop(columns=["released_month","mode","artist(s)_name","track_name"], inplace=True)
+df_encode.drop(columns=["released_month","mode","artist(s)_name","track_name","release_day"], inplace=True)
 ```
+
+Note: we processed the months as columns, but we drop them for our model since the month of release has little to do with the kind of song we recommend. The same is done for release day, track name, mode, and artist(s) name.
 
 ```python
 df_encode.info()
@@ -566,6 +568,8 @@ To find the optimal value of clusters, the elbow method follows the below steps:
 - The sharp point of bend or a point of the plot looks like an arm, then that point is considered as the best value of K.
 
 ```python
+import matplotlib.pyplot as plt
+
 score_1 = []
 range_values = range(1, 60)
 for i in range_values:
