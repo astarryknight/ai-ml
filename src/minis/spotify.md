@@ -624,7 +624,7 @@ To get a better picture of our clusters, let's create some visualizations!
 ----
 
 ### Visualization using PCA
-We obviously can't see in 20 dimensions, so we have to reduce these dimensions in order to visualize. So, let's use **PCA**! (For more info about PCA and dimensionality reduction, refer to [this](https://astarryknight.github.io/ai-ml/src/theory/dimensionality_reduction.html) article)
+We obviously can't see in 20 dimensions, so we have to reduce these dimensions in order to visualize. So, let's use **PCA**!
 
 **Compress data to two input variables. This will allow us to view the clusters in two dimensions.**
 ```python
