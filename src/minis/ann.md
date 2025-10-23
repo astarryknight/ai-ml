@@ -65,7 +65,7 @@ else :
 print(x, "or", y, "is : ", outputP)
 ```
 
-We could also save the weights that the neural network just calculated in a file, to use it later without making another learning phase. It is done for way bigger project, in which that phase can last days or weeks.
+We could also save the weights that the neural network just calculated in a file, to use it later without making another learning phase. It is done for much larger projects, in which that phase can last days or weeks.
 
 ```python
 outputP = 1/(1+numpy.exp(-outputP)) #sigmoid function
