@@ -88,7 +88,7 @@ import pandas as pd
 Download the dataset [here](../datasets/Churn_Modelling.csv)
 
 ```python
-path = '../datasets/spotify-2023.csv' #replace this with your path/to/dataset
+path = '../datasets/churn_modelling.csv' #replace this with your path/to/dataset
 df = pd.read_csv(path)
 ```
 
