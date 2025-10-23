@@ -153,8 +153,6 @@ Here is the error function we can use to see how our neural network is performin
 
 ![Loss Function](../res/alien16.png)
 
-### FLAG put a link to another lesson here - regularization & loss funcs
-
 ### Backpropagation
 In the past, we used [gradient descent](https://astarryknight.github.io/ai-ml/src/theory/grad_desc.html) to train our models. This is the same for neural networks, and we will be using a training algorithm known as *backpropagation*. The structure for backpropagation is:
 
