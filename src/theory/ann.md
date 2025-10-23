@@ -113,7 +113,7 @@ These properties can be seen in the visual representation above: The inputs are 
 
 ![Neural Net Bio](../res/alien10.png)
 
-As mentioned, a neural network is made up of many perceptrons. It is made to lossely emulate the human brean, in which the output of several neurons becomes the input to another neuron. In the same way, in a neural network, the output of several perceptrons becomes the input of another perceptron. In practice, step functions are never used for neural networks because it would make it impossible to use gradient descent - so, the sigmoid function is widely used in neural networks.
+As mentioned, a neural network is made up of many perceptrons. It is made to loosely emulate the human brain, in which the output of several neurons becomes the input to another neuron. In the same way, in a neural network, the output of several perceptrons becomes the input of another perceptron. In practice, step functions are never used for neural networks because it would make it impossible to use gradient descent - so, the sigmoid function is widely used in neural networks.
 
 ![Combined Perceptrons Math](../res/alien11.png)
 
