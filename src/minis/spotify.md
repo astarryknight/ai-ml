@@ -363,7 +363,7 @@ df_encode = pd.concat([df, dummies], axis=1)
 
 #df_encode = pd.concat([df_encode, dummies], axis=1)
 
-df_encode.drop(columns=["released_month","mode","artist(s)_name","track_name","release_day"], inplace=True)
+df_encode.drop(columns=["released_month","mode","artist(s)_name","track_name","released_day"], inplace=True)
 ```
 
 Note: we processed the months as columns, but we drop them for our model since the month of release has little to do with the kind of song we recommend. The same is done for release day, track name, mode, and artist(s) name.
