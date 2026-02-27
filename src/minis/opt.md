@@ -5,13 +5,13 @@ parent: Minis
 nav_order: 6
 ---
 
-## Optimization Playground: Gradient Descent + Neural Network Optimization
+## Optimization Playground: Gradient Descent Intuition
 
 If you haven't learned the optimization basics yet, start with the [Gradient Descent Theory lesson](https://astarryknight.github.io/ai-ml/src/theory/grad_desc.html).
 
 **Objective:** Build intuition for optimization by training:
 1. A linear regression model with simple gradient descent (square trick idea)
-2. A tiny neural network with backpropagation
+2. The same linear model with full-batch gradient descent and a visual loss landscape
 
 Everything below is designed to run directly in Google Colab.
 
@@ -120,172 +120,114 @@ What to try:
 
 ----
 
-### Part 2: Neural Network Optimization (2-Layer Net)
+### Part 2: Visualizing the Loss Landscape
 
-Now we do the same optimization loop for a small neural net:
-- Forward pass to get predictions
-- Compute loss
-- Backpropagation to compute gradients
-- Gradient descent update on weights
+Instead of moving to neural networks, let's stay with linear regression and build stronger intuition.
 
-We will classify a nonlinear 2D dataset.
+In this part, we optimize the same model:
+$$
+\hat{y} = wx + b
+$$
 
-**Create Dataset**
+But now we:
+- Use full-batch gradient descent (all points each step)
+- Track `(w, b)` over time
+- Draw the loss surface contours and show how gradient descent moves downhill
 
-```python
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.datasets import make_moons
-
-X, y = make_moons(n_samples=400, noise=0.2, random_state=42)
-y = y.reshape(-1, 1)
-
-plt.figure(figsize=(5, 4))
-plt.scatter(X[:, 0], X[:, 1], c=y[:, 0], cmap='coolwarm', s=25)
-plt.title('Two Moons Dataset')
-plt.xlabel('x1')
-plt.ylabel('x2')
-plt.show()
-```
-
-**Model + Training Code (NumPy Only)**
+**Batch Gradient Descent Setup**
 
 ```python
-# Activations
-def tanh(z):
-    return np.tanh(z)
-
-def tanh_grad(a):
-    return 1 - a**2
-
-def sigmoid(z):
-    return 1 / (1 + np.exp(-z))
-
-# Binary cross-entropy
-def bce_loss(y_true, y_pred, eps=1e-8):
-    y_pred = np.clip(y_pred, eps, 1 - eps)
-    return -np.mean(y_true * np.log(y_pred) + (1 - y_true) * np.log(1 - y_pred))
+def mse_loss(x, y, w, b):
+    y_hat = w * x + b
+    return np.mean((y_hat - y) ** 2)
 
 
-def init_params(input_dim=2, hidden_dim=8, output_dim=1, seed=42):
-    rng = np.random.default_rng(seed)
-    W1 = rng.normal(0, 0.5, size=(input_dim, hidden_dim))
-    b1 = np.zeros((1, hidden_dim))
-    W2 = rng.normal(0, 0.5, size=(hidden_dim, output_dim))
-    b2 = np.zeros((1, output_dim))
-    return W1, b1, W2, b2
+def gradients(x, y, w, b):
+    n = len(x)
+    y_hat = w * x + b
+    dw = (2 / n) * np.sum((y_hat - y) * x)
+    db = (2 / n) * np.sum(y_hat - y)
+    return dw, db
 
 
-def forward(X, W1, b1, W2, b2):
-    z1 = X @ W1 + b1
-    a1 = tanh(z1)
-    z2 = a1 @ W2 + b2
-    y_hat = sigmoid(z2)
-    return z1, a1, z2, y_hat
-
-
-def train_nn(X, y, hidden_dim=8, lr=0.1, epochs=3000, seed=42):
-    W1, b1, W2, b2 = init_params(2, hidden_dim, 1, seed=seed)
-    losses, accs = [], []
-    m = X.shape[0]
+def train_batch_gd(x, y, w0=0.0, b0=0.0, learning_rate=0.01, epochs=100):
+    w, b = w0, b0
+    history = [(w, b, mse_loss(x, y, w, b))]
 
     for _ in range(epochs):
-        z1, a1, z2, y_hat = forward(X, W1, b1, W2, b2)
+        dw, db = gradients(x, y, w, b)
+        w -= learning_rate * dw
+        b -= learning_rate * db
+        history.append((w, b, mse_loss(x, y, w, b)))
 
-        # Loss + accuracy
-        loss = bce_loss(y, y_hat)
-        y_pred = (y_hat >= 0.5).astype(int)
-        acc = np.mean(y_pred == y)
-        losses.append(loss)
-        accs.append(acc)
-
-        # Backprop
-        dz2 = (y_hat - y) / m
-        dW2 = a1.T @ dz2
-        db2 = np.sum(dz2, axis=0, keepdims=True)
-
-        da1 = dz2 @ W2.T
-        dz1 = da1 * tanh_grad(a1)
-        dW1 = X.T @ dz1
-        db1 = np.sum(dz1, axis=0, keepdims=True)
-
-        # Gradient descent update
-        W1 -= lr * dW1
-        b1 -= lr * db1
-        W2 -= lr * dW2
-        b2 -= lr * db2
-
-    return W1, b1, W2, b2, losses, accs
+    return w, b, history
 ```
 
-**Run and Interact**
+**Run with Different Learning Rates**
 
 ```python
-# Try changing these values and re-running
-hidden_dim = 8
-learning_rate = 0.1
-epochs = 3000
-seed = 42
+# Try different learning rates
+rates = [0.001, 0.01, 0.05]
+epochs = 120
 
-W1, b1, W2, b2, losses, accs = train_nn(
-    X, y,
-    hidden_dim=hidden_dim,
-    lr=learning_rate,
-    epochs=epochs,
-    seed=seed
-)
+all_histories = {}
+for lr in rates:
+    w, b, hist = train_batch_gd(features, labels, w0=0.0, b0=0.0, learning_rate=lr, epochs=epochs)
+    all_histories[lr] = (w, b, hist)
+    print(f"lr={lr:<6} final w={w:8.3f}, final b={b:8.3f}, final MSE={hist[-1][2]:10.3f}")
+```
 
-# Final predictions
-_, _, _, y_hat = forward(X, W1, b1, W2, b2)
-y_pred = (y_hat >= 0.5).astype(int)
-final_acc = np.mean(y_pred == y)
+**Plot Loss vs Epoch**
 
-# Plot loss and accuracy
-fig, ax = plt.subplots(1, 2, figsize=(12, 4))
-ax[0].plot(losses)
-ax[0].set_title('Training Loss (BCE)')
-ax[0].set_xlabel('Epoch')
-ax[0].set_ylabel('Loss')
+```python
+plt.figure(figsize=(7, 4))
+for lr in rates:
+    hist = all_histories[lr][2]
+    losses = [h[2] for h in hist]
+    plt.plot(losses, label=f"lr={lr}")
 
-ax[1].plot(accs)
-ax[1].set_title('Training Accuracy')
-ax[1].set_xlabel('Epoch')
-ax[1].set_ylabel('Accuracy')
-
+plt.title("MSE During Training (Batch Gradient Descent)")
+plt.xlabel("Epoch")
+plt.ylabel("MSE")
+plt.legend()
 plt.show()
-print(f"Final accuracy: {final_acc:.3f}")
 ```
 
-**Visualize Decision Boundary**
+**Visualize the Loss Contours + Descent Paths**
 
 ```python
-def plot_decision_boundary(X, y, W1, b1, W2, b2):
-    x_min, x_max = X[:, 0].min() - 0.5, X[:, 0].max() + 0.5
-    y_min, y_max = X[:, 1].min() - 0.5, X[:, 1].max() + 0.5
-    xx, yy = np.meshgrid(
-        np.linspace(x_min, x_max, 250),
-        np.linspace(y_min, y_max, 250)
-    )
+# Build a grid of (w, b) values
+w_vals = np.linspace(20, 70, 180)
+b_vals = np.linspace(50, 180, 180)
+W, B = np.meshgrid(w_vals, b_vals)
 
-    grid = np.c_[xx.ravel(), yy.ravel()]
-    _, _, _, probs = forward(grid, W1, b1, W2, b2)
-    Z = probs.reshape(xx.shape)
+Z = np.zeros_like(W)
+for i in range(W.shape[0]):
+    for j in range(W.shape[1]):
+        Z[i, j] = mse_loss(features, labels, W[i, j], B[i, j])
 
-    plt.figure(figsize=(6, 5))
-    plt.contourf(xx, yy, Z, levels=20, cmap='coolwarm', alpha=0.6)
-    plt.scatter(X[:, 0], X[:, 1], c=y[:, 0], cmap='coolwarm', edgecolors='k', s=20)
-    plt.title('Neural Network Decision Boundary')
-    plt.xlabel('x1')
-    plt.ylabel('x2')
-    plt.show()
+plt.figure(figsize=(8, 6))
+contours = plt.contour(W, B, Z, levels=30, cmap='viridis')
+plt.clabel(contours, inline=True, fontsize=8)
 
-plot_decision_boundary(X, y, W1, b1, W2, b2)
+# Overlay paths for each learning rate
+for lr in rates:
+    hist = all_histories[lr][2]
+    ws = [h[0] for h in hist]
+    bs = [h[1] for h in hist]
+    plt.plot(ws, bs, marker='o', markersize=2, linewidth=1.5, label=f"lr={lr}")
+
+plt.title("Loss Landscape (MSE) and Gradient Descent Paths")
+plt.xlabel("w (slope)")
+plt.ylabel("b (intercept)")
+plt.legend()
+plt.show()
 ```
 
 What to try:
-- Change `hidden_dim` from `2` to `16` and compare fit quality.
-- Set `learning_rate` too high (for example `1.0`) and watch training fail.
-- Lower epochs and see underfitting.
+- Add a very large learning rate like `0.2` and look for overshooting/divergence.
+- Change the start point in `train_batch_gd` (`w0`, `b0`) and compare paths.
+- Increase `epochs` and see how quickly each learning rate reaches the minimum region.
 
 ----
 
@@ -293,6 +235,6 @@ What to try:
 
 You just used the same optimization idea twice:
 - In linear regression, gradient descent adjusted a line.
-- In a neural network, gradient descent adjusted many weights through backpropagation.
+- In the loss-landscape view, you watched `(w, b)` physically move downhill on the error surface.
 
 That shared loop is the core of most modern machine learning training.
