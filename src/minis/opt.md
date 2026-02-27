@@ -60,9 +60,9 @@ plt.show()
 ```
 
 **Code Breakdown**
-- `import numpy as np`: loads NumPy for numeric arrays and math.
+<!-- - `import numpy as np`: loads NumPy for numeric arrays and math.
 - `import matplotlib.pyplot as plt`: loads plotting utilities.
-- `import random`: used for stochastic point selection in Part 1.
+- `import random`: used for stochastic point selection in Part 1. -->
 - `features`: input variable (`x`) = number of donations.
 - `labels`: target variable (`y`) = funds raised.
 - `plt.scatter(features, labels)`: plots raw data so you can visually check if a line fit makes sense.
@@ -252,7 +252,7 @@ def train_batch_gd(x, y, w0=0.0, b0=0.0, learning_rate=0.01, epochs=100):
 
 ```python
 # Try different learning rates
-rates = [0.001, 0.01, 0.05]
+rates = [0.001, 0.01]
 epochs = 120
 
 all_histories = {}
@@ -347,7 +347,7 @@ plt.show()
 - Too-small learning rates move correctly but very slowly.
 
 What to try:
-- Add a very large learning rate like `0.2` and look for overshooting/divergence.
+- Add a very large learning rate like `0.02` and look for overshooting/divergence.
 - Change the start point in `train_batch_gd` (`w0`, `b0`) and compare paths.
 - Increase `epochs` and see how quickly each learning rate reaches the minimum region.
 

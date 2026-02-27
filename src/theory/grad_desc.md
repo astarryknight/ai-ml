@@ -110,6 +110,13 @@ def square_trick(base_dono, funds_per_dono, num_donos, funds, learning_rate):
 We are essentially adjusting our line incrementally. In a specific rate called the **learning rate**.
 - **Learning Rate** - A very small number we pick *before* training our model. This number makes sure we are only taking small steps with each adjustment.
 
+**Note: Gradient Descent vs Stochastic Gradient Descent (SGD)**
+- **(Batch) Gradient Descent** uses the *entire dataset* to compute each update step.  
+  - More stable updates, but each step is slower on large datasets.
+- **Stochastic Gradient Descent (SGD)** uses *one random data point* per step.  
+  - Steps are faster and noisier, which can help with very large datasets and faster initial progress.
+- In practice, many workflows use a middle ground called **mini-batch gradient descent** (small random groups of points per step).
+
 ----
 
 ### Linear Regression Algorithm
