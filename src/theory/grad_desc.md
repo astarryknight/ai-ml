@@ -4,6 +4,15 @@ title:  2. Optimization & Gradient Descent
 parent: Theory
 nav_order: 3
 layout: katex
+estimated_time: 90-120 minutes
+prereqs:
+  - Intro to Machine Learning
+  - Numpy basics
+outcomes:
+  - Explain how gradient descent updates parameters
+  - Interpret learning rate behavior
+  - Connect error curves to convergence
+checkpoint: Module 4
 ---
 
 ## Linear Regression
@@ -189,3 +198,18 @@ linear_regression(features, labels, learning_rate = 0.01, epochs = 2000) # We ca
 Currently, this only works with simple linear regression. If we want to do multiple linear regression, all we have to do is apply gradient descent to higher dimensions.
 
 Now that you know the basics of machine learning and optimization, check out the [Spotify Recommendation Mini](https://astarryknight.github.io/ai-ml/src/minis/spotify.html)
+
+----
+
+## Troubleshooting Gradient Descent
+- **Loss explodes or oscillates:** lower the learning rate.
+- **Loss decreases very slowly:** raise learning rate slightly or increase epochs.
+- **Inconsistent runs:** set random seeds for reproducibility.
+- **Poor fit despite low training error:** inspect data quality and feature scaling.
+
+## Quick Checkpoint Prompts
+1. What role does the learning rate play in optimization?
+2. Why can random initialization change the path of training?
+3. What does a flattening RMSE curve suggest?
+
+See [Checkpoints](../assessments/checkpoints.html) for answer guidance.

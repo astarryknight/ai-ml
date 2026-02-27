@@ -3,10 +3,21 @@ layout: post
 title:  1. Intro to Machine Learning
 parent: Theory
 nav_order: 2
+estimated_time: 90-120 minutes
+prereqs:
+  - What is AI/ML
+  - Numpy lesson
+outcomes:
+  - Explain supervised vs unsupervised learning
+  - Describe the practical ML workflow loop
+  - Identify common beginner pitfalls
+checkpoint: Module 3
 ---
 
 ## Intro to Machine Learning - How do Machines Learn?
 ![AI & ML](../res/ai_ml_diag.png)
+
+**Async note:** read this lesson together with [Evaluation Basics](./evaluation.html) and [Feature Engineering Basics](./feature_engineering.html).
 
 Artificial Intelligence is a rather broad field encompassing many practices such as cognitive modelling, math, logic, and even philosophy. But in general, AI is concerned with examining and recreating methods in which something (specifically, a computer) can think.
 
@@ -41,6 +52,18 @@ Some useful terms:
 - **feature** - any property, characteristic, or variable in our data that the model can use to make predictions
 
 In summary, machine learning really doesn't require complicated math or coding to understand the basics. Machine learning emulates common sense, but for computers. The machine will mimic certain ways humans think to make decisions accurately and quickly. To inform these decisions, machines use "experience" in the form of data. Finally, these decsions will ultimately be used to make some kind of prediction.
+
+----
+
+## Practical ML Workflow Loop
+In practice, most projects follow this repeatable loop:
+1. **Data** - gather and inspect data quality.
+2. **Split** - separate train/validation/test data.
+3. **Train** - fit a baseline model.
+4. **Evaluate** - use task-appropriate metrics.
+5. **Iterate** - improve preprocessing/features/model settings.
+
+This loop is the foundation for all later topics in this curriculum.
 
 
 ## Types of Machine Learning
@@ -165,3 +188,14 @@ Let's look at an example of a data set of people in a city. Suppose that each pe
 ![Dimensionality Reduction](../res/dimensionality_reduction.png)
 
 And that does it for the basics! There are other techniques like reinforcement learning, online learning, and batch learning, so you can research more if you'd like.
+
+----
+
+## Common Pitfalls (Beginner Checklist)
+- Training and testing on the same data.
+- Choosing metrics that do not match the real task objective.
+- Ignoring class imbalance in classification.
+- Confusing correlation with causation.
+- Changing many variables at once, making iteration hard to interpret.
+
+For answer checks and progression, use [Checkpoints](../assessments/checkpoints.html).

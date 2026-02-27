@@ -3,17 +3,36 @@ layout: post
 title:  Optimization Playground
 parent: Minis
 nav_order: 6
+estimated_time: 2-3 hours
+prereqs:
+  - Optimization & Gradient Descent theory lesson
+  - Numpy basics
+outcomes:
+  - Run and tune gradient descent experiments
+  - Interpret optimization visualizations
+difficulty: Beginner
 ---
 
 ## Optimization Playground: Gradient Descent Intuition
 
 If you haven't learned the optimization basics yet, start with the [Gradient Descent Theory lesson](https://astarryknight.github.io/ai-ml/src/theory/grad_desc.html).
 
-**Objective:** Build intuition for optimization by training:
+### Objective
+Build intuition for optimization by training:
 1. A linear regression model with simple gradient descent (square trick idea)
 2. The same linear model with full-batch gradient descent and a visual loss landscape
 
+### Prerequisites
+- Basic Python and NumPy
+- Intro to machine learning concepts (features, labels, loss)
+
+### Setup
 Everything below is designed to run directly in Google Colab.
+
+### Tasks
+- Complete Part 1 and Part 2 with default parameters.
+- Re-run with at least two different learning rates and compare outcomes.
+- Write down one failure case and one successful configuration.
 
 ----
 
@@ -238,3 +257,20 @@ You just used the same optimization idea twice:
 - In the loss-landscape view, you watched `(w, b)` physically move downhill on the error surface.
 
 That shared loop is the core of most modern machine learning training.
+
+----
+
+### Validation
+- You can explain why different learning rates produce different trajectories.
+- Your plots show both convergence and at least one unstable/slow case.
+- You can report final RMSE/MSE values and compare settings.
+
+### Extensions
+- Add noise to the toy dataset and observe loss landscape changes.
+- Try normalizing inputs and compare convergence speed.
+- Plot parameter updates (`w`, `b`) versus epoch for one run.
+
+### Deliverable
+- A Colab notebook that runs top-to-bottom.
+- Two figure outputs: fit/loss plot and contour/path plot.
+- A short markdown summary of: best setting, failed setting, and why.

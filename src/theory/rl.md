@@ -4,6 +4,15 @@ title:  5. Reinforcement Learning
 parent: Theory
 nav_order: 7
 layout: katex
+estimated_time: 90-120 minutes
+prereqs:
+  - Intro to Machine Learning
+  - Optimization intuition
+outcomes:
+  - Define state, action, reward, and policy
+  - Explain exploration vs exploitation
+  - Understand value function intuition
+checkpoint: Module 8
 ---
 
 ## Reinforcement Learning
@@ -18,6 +27,15 @@ Reinforcement learning has already been applied to many different applications, 
 * Robotics
 
 and so much more!
+
+----
+
+## Minimum Viable Understanding
+For first-pass async completion, focus on:
+1. Agent-environment interaction loop.
+2. Reward-driven learning over trajectories.
+3. Exploration vs exploitation balance.
+4. Value function intuition.
 
 ----
 
@@ -127,6 +145,14 @@ If we run this simulation for a large number of attempts, we can observe that th
 Epsilon ($$\epsilon$$) is a variable that maintains a balance between exploration and exploitation. One downside of the action-value approach is that to generate the policy function, it generates a random distribution for all actions. However, when it wants to start performing well to increase returns, it can use exploitation, which just sets the action with the highest return to 100%, and the rest to 0%, effectively nullifying the distribution. When improving in RL, we need a balance between exploration and exploitation - to both try out different things to improve, and take advantage of improvements to perform well.
 
 In short, epsilon represents the proportion of time that actions are picked randomly, decreasing over time as the policy improves and less exploration is needed.
+
+----
+
+### Optional Depth (Second Pass)
+You can revisit these topics after completing core minis:
+- Policy gradient variance issues and baselines
+- Generalized policy iteration convergence details
+- Function approximation and deep RL stability concerns
 
 
 Now that you’ve mastered the basics of RL, let’s try out [Playing Snake with RL](https://astarryknight.github.io/ai-ml/src/minis/rl.html)

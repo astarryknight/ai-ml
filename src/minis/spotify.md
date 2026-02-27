@@ -3,12 +3,37 @@ layout: post
 title:  Spotify Music Recommendation
 parent: Minis
 nav_order: 2
+estimated_time: 4-6 hours
+prereqs:
+  - Intro to Machine Learning
+  - Numpy/Pandas basics
+outcomes:
+  - Clean real-world tabular data
+  - Build and interpret K-Means clusters
+  - Produce simple recommendation logic
+difficulty: Intermediate
 ---
 
 ## Spotify Intelligent Music Recommendation
 Now that you have some experience with machine learning models, let's put them to use! For this mini, we will be using a dataset of nearly 1000 of Spotify's most streamed songs to create a music recommendation system.
 
 There are many ways to go about this, but we'll focus on an unsupervised model (more specifically, clustering) to make recommendations.
+
+### Objective
+Build a clustering-based recommendation workflow on a real music dataset.
+
+### Prerequisites
+- Comfortable with Pandas data cleaning
+- Basic understanding of clustering and feature scaling
+
+### Setup
+- Use Google Colab or a local notebook environment.
+- Download dataset: [spotify-2023.csv](../datasets/spotify-2023.csv)
+
+### Tasks
+- Clean and preprocess the dataset.
+- Build clustering features and train K-Means.
+- Analyze clusters and implement track-based recommendations.
 
 ----
 
@@ -733,3 +758,20 @@ df_cluster[df_cluster['cluster'] == desired_cluster][['track_name','artist(s)_na
 |Tattoo                                           |Loreen                             |
 
 And with that you have made a spotify recommendation algorithm! Congratulations!
+
+----
+
+### Validation
+- Data types are corrected and key null/invalid values are handled.
+- Cluster assignment is generated for each usable track.
+- Recommendation query returns tracks from the same cluster for a valid input.
+
+### Extensions
+- Compare multiple `k` values and justify your final choice.
+- Add popularity-weighted ranking within each cluster.
+- Evaluate recommendation quality manually for 3-5 seed songs.
+
+### Deliverable
+- One notebook that runs end-to-end.
+- Final table of recommendations for at least three sample songs.
+- Short markdown summary of preprocessing decisions and cluster interpretation.

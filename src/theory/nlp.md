@@ -3,6 +3,15 @@ layout: post
 title:  4. Natural Language Processing
 parent: Theory
 nav_order: 6
+estimated_time: 90-120 minutes
+prereqs:
+  - Intro to Machine Learning
+  - Numpy lesson
+outcomes:
+  - Explain core text preprocessing concepts
+  - Build vocabulary-level intuition for NLP pipelines
+  - Connect preprocessing decisions to downstream models
+checkpoint: Module 7
 ---
 
 ## Natural Language Processing
@@ -21,6 +30,14 @@ In other words,
 > Making a Computer "think" and "act" like a Human
 
 NLP involves a computer understanding text for the sake of solving real-world tasks.
+
+----
+
+## Minimum Viable Understanding
+Before moving on, make sure you understand:
+1. Tokenization and vocabulary basics.
+2. Why normalization (lemmatization/stopword handling) matters.
+3. How text becomes features for ML models.
 
 ----
 ## Basics of NLP
@@ -174,5 +191,13 @@ Example: Senses for the word "plane":
 ![Word Senses](../res/nlp3.png)
 
 Word senses can be deduced from the context of the word, through semi-supervised learning and NLP.
+
+----
+
+### Optional Depth (Second Pass)
+If you want extra depth after finishing the core path:
+- More robust tokenization for multilingual text
+- Contextual embeddings and transformer tokenization
+- Sequence models and modern LLM pipelines
 
 Now that we're done with the baiscs of NLP, let's work on an example: [NLP with Disaster Tweets](https://astarryknight.github.io/ai-ml/src/minis/nlp.html).

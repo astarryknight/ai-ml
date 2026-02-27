@@ -3,41 +3,68 @@ layout: post
 title:  1. What is AI/ML?
 parent: Intro
 nav_order: 2
+estimated_time: 45-60 minutes
+prereqs:
+  - None
+outcomes:
+  - Distinguish AI vs ML clearly
+  - Explain symbolic vs connectionist approaches
+  - Describe why data quality matters
+checkpoint: Module 1
 ---
 
 ## What is AI/ML?
+Before diving into code, it is important to separate the broad field from the method we will mostly use.
 
-Before we delve into Python, Numpy, and ultimately the fundamentals of AI/ML. You should know the difference between AI and ML:
+- **Artificial Intelligence (AI):** building systems that perform tasks associated with intelligent behavior.
+- **Machine Learning (ML):** a subset of AI where systems learn patterns from data instead of relying only on hand-written rules.
 
-AI: making machines capable of "intelligent" behavior (broad-concept)
-AI is a vast area of study; we will be mostly focusing on ML
-ML: subset of AI, algorithms making decisions through patterns from data (method)
+In this course, we focus mostly on machine learning.
 
-In other words,
-> Ever wish your computer could be more like a savvy sidekick than a clueless sidekick? AI is the brainiac dreaming of understanding your vibes, and ML is its secret sauce – the tech making your computer less 'I follow orders' and more 'I've got this, boss!' It's the reason your tech is getting sassier and smarter.
+----
 
-In order to start using AI/ML, **Data is crucial!** Quality of data IMPACT model performance and decision-making. From training to evaluation, data plays a central role in building reliable and effective AI systems.
+## Learning Objectives
+By the end of this lesson, you should be able to:
+1. Define AI and ML in plain language.
+2. Compare symbolic and connectionist approaches.
+3. Explain why data quality strongly affects model outcomes.
 
-## Types of AI
-**Cognitive Modeling** - study in computer science that studies and attempts to simulate ***how*** humans think
+----
 
-John McCarthy - "Every aspect of learning or any other feature of intelligence can in principle be so precisely described that a machine can be made to simulate it."
-
-**Good Old Fashioned AI (Symbolic)**
-- Rule-based AI
-- Machine performs explicit instructions (IF-THEN) (Expert systems)
-- Programmers give rules, instructions, and facts to perform pattern matching
-- Logic and search
+## Types of AI Approaches
+### Symbolic AI (Rule-based)
+- Explicit rules and logic (if-then reasoning)
+- Useful when rules are clear and stable
 
 ![Symbolic AI](../res/symbolic_ai.png)
 
-**New Fangled AI (Connectionist)**
-- Machine Learning
-- Machines must learn instructions through training
-- The network discovers the rules from training data.
-- Applies statistical regression models to adjust the weight coefficients of their intermediate variables, until the best fitting model is found
-- Needs large amounts of collected data for most applications
+### Connectionist AI (Data-driven)
+- Learns patterns from examples
+- Uses statistical learning and optimization
+- Usually needs enough representative data
 
 ![Connectionist AI](../res/connectionist_ai.png)
 
-In this course, we will focus on **Connectionist AI**.
+----
+
+## Why Data Matters
+Model behavior depends on training data quality.
+- Biased or incomplete data can create unreliable results.
+- Clean, representative data improves generalization.
+- Evaluation only makes sense when data handling is sound.
+
+----
+
+## Expected Outcomes
+After this page, you should be ready to:
+- Move into Python/NumPy data workflows.
+- Understand why evaluation and feature engineering are core ML skills, not optional extras.
+
+----
+
+## Self-Check
+1. In one sentence each, define AI and ML.
+2. Give one symbolic system example and one ML system example.
+3. Why can two models with identical code perform very differently?
+
+For answer guidance, see [Checkpoints](../assessments/checkpoints.html).

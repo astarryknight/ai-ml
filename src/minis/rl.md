@@ -3,12 +3,37 @@ layout: post
 title:  Snake with RL
 parent: Minis
 nav_order: 5
+estimated_time: 6-10 hours
+prereqs:
+  - Reinforcement Learning theory lesson
+  - Python classes and basic PyTorch familiarity
+outcomes:
+  - Build an RL environment-agent training loop
+  - Train and visualize game score progression
+  - Explain exploration-exploitation behavior in practice
+difficulty: Advanced
 ---
 
 ## Playing Snake with RL
 (based on [this project](https://github.com/vedantgoswami/SnakeGameAI))
 
 Note: I highly recommend running this on a [local setup](https://astarryknight.github.io/ai-ml/src/intro/local.html), as Colab doesn't have good support for pygame.
+
+### Objective
+Train an RL agent to improve Snake gameplay using reward-driven learning.
+
+### Prerequisites
+- Comfort with Python OOP and control flow
+- Basic understanding of tensors and neural network training
+
+### Setup
+- Prefer local environment (pygame support).
+- Install dependencies listed below.
+
+### Tasks
+- Implement environment and agent components.
+- Train the model and track score progression.
+- Interpret exploration-to-exploitation behavior during training.
 
 ----
 
@@ -478,3 +503,20 @@ train()
 ![Graph](../res/graph_rl.png)
 
 This will start training the RL model. For the first few epochs, the behavior will seem very random (it is!). However, after a bit, you will start to see the RL network figuring out some game properties. After letting it run for a few minutes, the agent easily achieves a score of 20+.
+
+----
+
+### Validation
+- Training loop runs for multiple games without runtime errors.
+- Score graph trends upward over time (with expected variance).
+- Agent behavior qualitatively improves from random to strategic.
+
+### Extensions
+- Try different epsilon decay schedules and compare learning speed.
+- Modify reward shaping and observe policy changes.
+- Save and reload model checkpoints for reproducible runs.
+
+### Deliverable
+- Runnable training script/notebook.
+- Score plot image and a short analysis of training behavior.
+- Notes on one hyperparameter experiment and outcome.

@@ -3,16 +3,39 @@ layout: post
 title:  NLP with Disaster Tweets
 parent: Minis
 nav_order: 4
+estimated_time: 4-6 hours
+prereqs:
+  - NLP theory lesson
+  - Pandas and basic text processing familiarity
+outcomes:
+  - Build an NLP cleaning pipeline
+  - Explore token/ngram distributions
+  - Prepare text features for downstream modeling
+difficulty: Intermediate
 ---
 
 ## Natural Language Processing with Disaster Tweets
 (based on [this project](https://medium.com/bitgrit-data-science-publication/nlp-snippets-in-python-90ac29ffaea0))
 
-**Objective:** Predict which Tweets are about real disasters and which ones are not
+### Objective
+Predict which tweets are about real disasters and which are not.
+
+### Prerequisites
+- Basic Python functions and loops
+- Familiarity with dataframes and string operations
+
+### Setup
+- Run in Google Colab.
+- Install required NLP dependencies from the setup section below.
+
+### Tasks
+- Implement the text-cleaning utility functions.
+- Build cleaned text features and inspect distributions.
+- Prepare outputs suitable for a downstream classifier.
 
 ----
 
-### Setup
+### Environment Setup
 
 Install necessary data/libraries
 
@@ -427,3 +450,20 @@ plot_ngrams_bar(df_train["clean_text"], ngram=3)
 ![Frequency Histogram](../res/nlp_freq_hist.png)
 
 From here, we can use **deep learning** models to predict for the target. For that look [here](https://www.kaggle.com/code/alexia/kerasnlp-starter-notebook-disaster-tweets).
+
+----
+
+### Validation
+- Cleaning pipeline runs on sample text and full dataset columns.
+- Frequency and n-gram visualizations are generated successfully.
+- Final cleaned text column is ready for model input.
+
+### Extensions
+- Compare lemmatization vs stemming impact on vocabulary size.
+- Add TF-IDF baseline model and report classification metrics.
+- Error-analyze misclassified tweets after a baseline classifier.
+
+### Deliverable
+- Notebook with preprocessing + EDA figures.
+- Final cleaned dataset preview and feature extraction cell.
+- Short markdown summary of key language patterns discovered.

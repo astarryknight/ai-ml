@@ -4,6 +4,15 @@ title:  3. Artificial Neural Networks
 parent: Theory
 nav_order: 5
 layout: katex
+estimated_time: 2-3 hours
+prereqs:
+  - Intro to Machine Learning
+  - Optimization & Gradient Descent
+outcomes:
+  - Explain perceptrons and layered networks
+  - Describe backpropagation at a conceptual level
+  - Identify basic overfitting risks
+checkpoint: Module 6
 ---
 
 ## Artificial Neural Networks
@@ -26,6 +35,17 @@ Terminology:
 * **Perceptron** - An algorithm which uses a combination of features and weights to make a prediction
 * **Discrete** - outputs 0 or 1
 * **Continuous** - outputs any number in the interval (0,1)
+
+----
+
+## Minimum Viable Understanding (Read This First)
+If you are learning asynchronously, prioritize these ideas first:
+1. A perceptron is a weighted sum + bias + activation.
+2. Stacking perceptrons allows nonlinear decision boundaries.
+3. Training updates weights to reduce loss (backprop + gradient descent).
+4. Overfitting is common and must be managed.
+
+After these are clear, continue through the full examples.
 
 ---
 
@@ -183,6 +203,14 @@ This technique makes sure that everything is trained equally, not introducing mo
 This is done in the neural network with training the weights. The dropout algorithm removes some of the nodes randomly at each epoch, which forces the rest of the nodes to train in their place. Dropout has been proven to have a positive effect on reducing overfitting.
 
 ![Dropout Figure](../res/alien19.png)
+
+----
+
+### Advanced Notes (Optional On First Pass)
+The following are useful but optional for first completion of the intro path:
+- Detailed regularization variants (L1 vs L2 tradeoffs)
+- Activation function derivative behavior in deep stacks
+- Hyperparameter interactions at scale (batching, architecture depth, dropout tuning)
 
 ### Activation Functions
 

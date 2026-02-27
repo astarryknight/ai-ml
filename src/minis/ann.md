@@ -3,6 +3,15 @@ layout: post
 title:  Artificial Neural Network
 parent: Minis
 nav_order: 3
+estimated_time: 5-7 hours
+prereqs:
+  - Artificial Neural Networks theory lesson
+  - Basic pandas/sklearn workflow
+outcomes:
+  - Train a simple perceptron and a feed-forward ANN
+  - Evaluate model output with confusion matrix and accuracy
+  - Make a prediction for new input data
+difficulty: Intermediate
 ---
 
 ## Artificial Neural Network
@@ -10,6 +19,22 @@ nav_order: 3
 (based on [this textbook](https://www.google.com/books/edition/Grokking_Machine_Learning/fNhOEAAAQBAJ?hl=en&gbpv=0))
 
 If you haven't learned how ANNs work, check out [this](https://astarryknight.github.io/ai-ml/src/theory/ann.html) lesson!
+
+### Objective
+Practice neural network optimization through two stages: a simple perceptron and a tabular ANN classifier.
+
+### Prerequisites
+- Basic NumPy and Pandas
+- Familiarity with train/test split and evaluation metrics
+
+### Setup
+- Use Colab or local Python environment with TensorFlow/Keras and scikit-learn.
+- Download: [Churn_Modelling.csv](../datasets/Churn_Modelling.csv)
+
+### Tasks
+- Implement and test the simple perceptron section.
+- Build the ANN classifier pipeline for churn prediction.
+- Evaluate model behavior and test one new customer input.
 
 ---
 
@@ -412,3 +437,20 @@ print(new_prediction)
 ```markdown
 [[0.5705499]]
 ```
+
+----
+
+### Validation
+- Training completes without errors and produces predictions on test data.
+- Confusion matrix and accuracy are reported.
+- New-customer inference runs with the same preprocessing pipeline.
+
+### Extensions
+- Compare at least two ANN architectures (layer size/depth).
+- Tune epochs or batch size and compare performance.
+- Add precision/recall/F1 alongside accuracy.
+
+### Deliverable
+- Notebook with both perceptron and ANN sections executable end-to-end.
+- Reported metrics and one concise interpretation paragraph.
+- One saved table/image showing model performance summary.

@@ -3,9 +3,21 @@ layout: post
 title:  3. Numpy
 parent: Intro
 nav_order: 4
+estimated_time: 2-3 hours
+prereqs:
+  - Basic Python syntax
+outcomes:
+  - Build arrays and use vectorized operations
+  - Use slicing/masks for data filtering
+  - Prepare features for downstream ML lessons
+checkpoint: Module 2
 ---
 
 ## Intro to Python & Numpy
+**Prerequisites:** basic Python variables, loops, and functions.
+
+**How this connects to later modules:** this lesson gives you the array operations used in feature engineering, evaluation, and optimization lessons.
+
 - **Python** - Popular language commonly used in data science for its extensive libraries and versatility
 - **Jupyter Notebook** - Interactive IDE (Integrated Development Environments) commonly used for EDA (exploratory data analysis) and data visualization. [Google Colab](https://colab.research.google.com) is basically the same thing.
 
@@ -257,3 +269,15 @@ arr[mask]
 8. Generate an array "r" of random integers [0,20] with shape (1,10)
 9. Print values > 10 in "r"
 10. Print all the even numbers in "r"
+
+----
+
+### Practice Blocks (For Upcoming Lessons)
+**Practice A: Evaluation prep**  
+Create `y_true` and `y_pred` arrays and compute MAE and RMSE with NumPy operations.
+
+**Practice B: Feature engineering prep**  
+Create a 2D array with some missing placeholders (for example `-1`) and use masks to replace them with column means.
+
+**Practice C: Optimization prep**  
+Given `x`, `y`, `w`, and `b`, compute predictions `y_hat = w*x + b` and mean squared error in one vectorized expression.
