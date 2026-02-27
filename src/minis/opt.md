@@ -59,6 +59,15 @@ plt.ylabel("Funds Raised")
 plt.show()
 ```
 
+**Code Breakdown**
+- `import numpy as np`: loads NumPy for numeric arrays and math.
+- `import matplotlib.pyplot as plt`: loads plotting utilities.
+- `import random`: used for stochastic point selection in Part 1.
+- `features`: input variable (`x`) = number of donations.
+- `labels`: target variable (`y`) = funds raised.
+- `plt.scatter(features, labels)`: plots raw data so you can visually check if a line fit makes sense.
+- If the points roughly align linearly, gradient descent for a line model is a good first approach.
+
 **Gradient Descent Utilities**
 
 ```python
@@ -94,6 +103,26 @@ def train_linear(features, labels, learning_rate=0.01, epochs=2000, seed=7):
 
     return base_funds, funds_per_dono, errors
 ```
+
+**Code Breakdown**
+- `rmse(...)`: computes average prediction error magnitude (lower is better).
+- In `square_trick(...)`:
+- `pred = base_funds + funds_per_dono * num_donos` computes current line prediction for one point.
+- `(funds - pred)` is the signed error for that point.
+- `funds_per_dono += ...` updates slope (`m`) using error scaled by `x` and learning rate.
+- `base_funds += ...` updates intercept (`b`) using error and learning rate.
+- In `train_linear(...)`:
+- `random.seed(seed)` makes runs reproducible.
+- `base_funds` and `funds_per_dono` start random (like random initialization in training).
+- Each epoch:
+- `preds = ...` predicts all points using current line.
+- `errors.append(rmse(...))` stores error history for plotting.
+- Random index `i` selects one training point (stochastic gradient descent behavior).
+- `square_trick(...)` applies one update step.
+- Return values:
+- `base_funds`: final intercept.
+- `funds_per_dono`: final slope.
+- `errors`: learning curve over epochs.
 
 **Run and Interact**
 
@@ -131,6 +160,27 @@ print(f"funds_per_dono (slope): {funds_per_dono:.4f}")
 print(f"base_funds (intercept): {base_funds:.4f}")
 print(f"final RMSE: {errors[-1]:.4f}")
 ```
+
+**Code Breakdown**
+- Hyperparameters:
+- `learning_rate`: step size for updates.
+- `epochs`: number of update steps.
+- `seed`: repeatable randomness.
+- `train_linear(...)` returns fitted parameters and error history.
+- `preds = ...` computes final fitted line values for plotting.
+- Left plot:
+- scatter = original data.
+- red line = fitted model.
+- Right plot:
+- RMSE vs epoch = training behavior over time.
+- Printed values:
+- slope/intercept define the learned line.
+- final RMSE summarizes final fit quality.
+
+**How to Read Results**
+- Fast drop then plateau in RMSE is expected.
+- Very noisy/oscillating RMSE often means learning rate is too high.
+- Very slow monotonic decrease often means learning rate is too low.
 
 What to try:
 - Increase `learning_rate` to `0.1` and observe instability.
@@ -182,6 +232,22 @@ def train_batch_gd(x, y, w0=0.0, b0=0.0, learning_rate=0.01, epochs=100):
     return w, b, history
 ```
 
+**Code Breakdown**
+- `mse_loss(...)`: computes mean squared error for the full dataset.
+- `gradients(...)` computes exact full-batch gradients:
+- `dw`: how loss changes with slope `w`.
+- `db`: how loss changes with intercept `b`.
+- Formula intuition:
+- if predictions are too high on average, gradients push parameters down.
+- if predictions are too low on average, gradients push parameters up.
+- `train_batch_gd(...)`:
+- starts from `w0`, `b0`.
+- stores `(w, b, loss)` at each step in `history`.
+- applies update rule:
+- `w -= learning_rate * dw`
+- `b -= learning_rate * db`
+- This is standard gradient descent on a 2-parameter linear model.
+
 **Run with Different Learning Rates**
 
 ```python
@@ -195,6 +261,18 @@ for lr in rates:
     all_histories[lr] = (w, b, hist)
     print(f"lr={lr:<6} final w={w:8.3f}, final b={b:8.3f}, final MSE={hist[-1][2]:10.3f}")
 ```
+
+**Code Breakdown**
+- `rates` lets you compare multiple learning rates in one run.
+- `all_histories` stores all trajectories for later plotting.
+- For each `lr`:
+- train model from the same start point (`w0=0.0`, `b0=0.0`).
+- collect full trajectory `hist`.
+- print final parameters and final MSE.
+
+**What to Observe**
+- Which learning rate reaches lower MSE within fixed epochs?
+- Which learning rate is unstable or too slow?
 
 **Plot Loss vs Epoch**
 
@@ -211,6 +289,16 @@ plt.ylabel("MSE")
 plt.legend()
 plt.show()
 ```
+
+**Code Breakdown**
+- Extract loss sequence from each run: `[h[2] for h in hist]`.
+- Plot one curve per learning rate on same axes.
+- This gives a direct convergence-speed comparison.
+
+**What to Observe**
+- Steeper early decline indicates faster initial learning.
+- Flatter curves indicate slower convergence.
+- Curves that spike or diverge indicate unstable updates.
 
 **Visualize the Loss Contours + Descent Paths**
 
@@ -242,6 +330,21 @@ plt.ylabel("b (intercept)")
 plt.legend()
 plt.show()
 ```
+
+**Code Breakdown**
+- `w_vals`, `b_vals`: parameter grid for contour plot.
+- `W, B = np.meshgrid(...)`: creates every `(w, b)` pair on that grid.
+- `Z[i, j] = mse_loss(...)`: computes loss at each parameter pair.
+- `plt.contour(...)`: draws equal-loss contour lines (a topographic map of loss).
+- Overlay section:
+- `ws = [h[0] for h in hist]` and `bs = [h[1] for h in hist]` extract each run's path.
+- `plt.plot(ws, bs, ...)` shows how gradient descent moves through parameter space.
+
+**How to Interpret the Contour Plot**
+- Center/lower contour regions represent lower error.
+- A good learning rate traces a smooth path toward low-loss contours.
+- Too-large learning rates jump around or overshoot the valley.
+- Too-small learning rates move correctly but very slowly.
 
 What to try:
 - Add a very large learning rate like `0.2` and look for overshooting/divergence.
