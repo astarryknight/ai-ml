@@ -35,7 +35,6 @@ Run in Google Colab (or local Python):
 ```
 
 ```python
-import copy
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
@@ -160,7 +159,9 @@ for epoch in range(num_epochs):
     history["train_acc"].append(tr_acc)
     history["test_loss"].append(te_loss)
     history["test_acc"].append(te_acc)
-    history["states"].append(copy.deepcopy(model.state_dict()))
+    history["states"].append(
+        {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}
+    )
 
 print(f"Final MLP test accuracy: {history['test_acc'][-1]:.3f}")
 ```
