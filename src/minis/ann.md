@@ -3,454 +3,494 @@ layout: post
 title:  Artificial Neural Network
 parent: Minis
 nav_order: 3
-estimated_time: 5-7 hours
+estimated_time: 2-3 hours
 prereqs:
   - Artificial Neural Networks theory lesson
-  - Basic pandas/sklearn workflow
+  - Basic Python and NumPy
 outcomes:
-  - Train a simple perceptron and a feed-forward ANN
-  - Evaluate model output with confusion matrix and accuracy
-  - Make a prediction for new input data
+  - Train a PyTorch linear model as a single-neuron neural network
+  - Visualize decision boundaries and model confidence during training
+  - Visualize network structure and weight updates over epochs
 difficulty: Intermediate
 ---
 
-## Artificial Neural Network
+## Artificial Neural Network Mini: Dynamic Linear Classifier in PyTorch
 
-(based on [this textbook](https://www.google.com/books/edition/Grokking_Machine_Learning/fNhOEAAAQBAJ?hl=en&gbpv=0))
-
-If you haven't learned how ANNs work, check out [this](https://astarryknight.github.io/ai-ml/src/theory/ann.html) lesson!
+If you have not done the ANN theory lesson yet, start [here](https://astarryknight.github.io/ai-ml/src/theory/ann.html).
 
 ### Objective
-Practice neural network optimization through two stages: a simple perceptron and a tabular ANN classifier.
+Build and train a neural network with PyTorch (a linear layer + sigmoid), and make training visual.
 
-### Prerequisites
-- Basic NumPy and Pandas
-- Familiarity with train/test split and evaluation metrics
+### Why this dataset?
+Instead of bank churn, we will use a 2D moon-shaped dataset generated with `sklearn.datasets.make_moons`.
+
+Why this is better for learning:
+- You can plot every point directly.
+- You can watch the decision boundary move while training.
+- You can see where a linear neural network succeeds and fails.
 
 ### Setup
-- Use Colab or local Python environment with TensorFlow/Keras and scikit-learn.
-- Download: [Churn_Modelling.csv](../datasets/Churn_Modelling.csv)
-
-### Tasks
-- Implement and test the simple perceptron section.
-- Build the ANN classifier pipeline for churn prediction.
-- Evaluate model behavior and test one new customer input.
-
----
-
-## A Very Simple Neural Network
-The beginning of the program just defines libraries and the values of the parameters, and creates a list which contains the values of the weights that will be modified (those are generated randomly).
+Run in Google Colab (or local Python environment):
 
 ```python
-import numpy, random, os
-lr = 1 #learning rate
-bias = 1 #value of bias
-weights = [random.random(),random.random(),random.random()] #weights generated in a list (3 weights in total for 2 neurons and the bias)
+!pip -q install torch scikit-learn matplotlib ipywidgets networkx
 ```
 
-Here we create a function which defines the work of the output neuron. It takes 3 parameters (the 2 values of the neurons and the expected output). “outputP” is the variable corresponding to the output given by the Perceptron. Then we calculate the error, used to modify the weights of every connections to the output neuron right after.
-
 ```python
-def Perceptron(input1, input2, output) :
-   outputP = input1*weights[0]+input2*weights[1]+bias*weights[2]
-   if outputP > 0 : #activation function (here Heaviside)
-      outputP = 1
-   else :
-      outputP = 0
-   error = output - outputP
-   weights[0] += error * input1 * lr
-   weights[1] += error * input2 * lr
-   weights[2] += error * bias * lr
-```
-
-We create a loop that makes the neural network repeat every situation several times. This part is the learning phase. The number of iteration is chosen according to the precision we want. However, be aware that too much iterations could lead the network to over-fitting, which causes it to focus too much on the treated examples, so it couldn’t get a right output on case it didn’t see during its learning phase.
-
-However, our case here is a bit special, since there are only 4 possibilities, and we give the neural network all of them during its learning phase. A Perceptron is supposed to give a correct output without having ever seen the case it is treating.
-
-```python
-for i in range(50) :
-   Perceptron(1,1,1) #True or true
-   Perceptron(1,0,1) #True or false
-   Perceptron(0,1,1) #False or true
-   Perceptron(0,0,0) #False or false
-```
-
-Finally, we can ask the user to enter the values to check if the Perceptron is working. This is the testing phase.
-
-The activation function Heaviside is interesting to use in this case, since it takes back all values to exactly 0 or 1, since we are looking for a false or true result. We could try with a sigmoid function and obtain a decimal number between 0 and 1, normally very close to one of those limits.
-
-```python
-x = int(input())
-y = int(input())
-outputP = x*weights[0] + y*weights[1] + bias*weights[2]
-if outputP > 0 : #activation function
-   outputP = 1
-else :
-   outputP = 0
-print(x, "or", y, "is : ", outputP)
-```
-
-We could also save the weights that the neural network just calculated in a file, to use it later without making another learning phase. It is done for much larger projects, in which that phase can last days or weeks.
-
-```python
-outputP = 1/(1+numpy.exp(-outputP)) #sigmoid function
-```
-
-Here's some more fun with neural networks on [Tensorflow Playground](https://playground.tensorflow.org/)
-
----
-
-## ANN for Classification
-
-### Processing the Data
-```python
-# Importing the libraries
 import numpy as np
 import matplotlib.pyplot as plt
-import pandas as pd
-```
+import torch
+import torch.nn as nn
+import torch.optim as optim
 
-Download the dataset [here](../datasets/Churn_Modelling.csv)
-
-```python
-path = '../datasets/churn_modelling.csv' #replace this with your path/to/dataset
-df = pd.read_csv(path)
-```
-
-```python
-dataset.head(25)
-```
-
-| RowNumber | CustomerId | Surname | CreditScore | Geography | Gender | Age | Tenure    | Balance | NumOfProducts | HasCrCard | IsActiveMember | EstimatedSalary | Exited | 
-| -- | --------- | ---------- | ------- | ----------- | --------- | ------ | --- | --------- | ------- | ------------- | --------- | -------------- | --------------- | ------ | - | - | - | - | - | - | - | - | - | - | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
-| 1  | 15634602  | Hargrave   | 619     | France      | Female    | 42     | 2   | 0.00      | 1       | 1             | 1         | 101348.88      | 1               |
-| 2  | 15647311  | Hill       | 608     | Spain       | Female    | 41     | 1   | 83807.86  | 1       | 0             | 1         | 112542.58      | 0               |
-| 3  | 15619304  | Onio       | 502     | France      | Female    | 42     | 8   | 159660.80 | 3       | 1             | 0         | 113931.57      | 1               |
-| 4  | 15701354  | Boni       | 699     | France      | Female    | 39     | 1   | 0.00      | 2       | 0             | 0         | 93826.63       | 0               |
-| 5  | 15737888  | Mitchell   | 850     | Spain       | Female    | 43     | 2   | 125510.82 | 1       | 1             | 1         | 79084.10       | 0               |
-| 6  | 15574012  | Chu        | 645     | Spain       | Male      | 44     | 8   | 113755.78 | 2       | 1             | 0         | 149756.71      | 1               |
-| 7  | 15592531  | Bartlett   | 822     | France      | Male      | 50     | 7   | 0.00      | 2       | 1             | 1         | 10062.80       | 0               |
-| 8  | 15656148  | Obinna     | 376     | Germany     | Female    | 29     | 4   | 115046.74 | 4       | 1             | 0         | 119346.88      | 1               |
-| 9  | 15792365  | He         | 501     | France      | Male      | 44     | 4   | 142051.07 | 2       | 0             | 1         | 74940.50       | 0               |
-| 10 | 15592389  | H?         | 684     | France      | Male      | 27     | 2   | 134603.88 | 1       | 1             | 1         | 71725.73       | 0               |
-| 11 | 15767821  | Bearce     | 528     | France      | Male      | 31     | 6   | 102016.72 | 2       | 0             | 0         | 80181.12       | 0               |
-| 12 | 15737173  | Andrews    | 497     | Spain       | Male      | 24     | 3   | 0.00      | 2       | 1             | 0         | 76390.01       | 0               |
-| 13 | 15632264  | Kay        | 476     | France      | Female    | 34     | 10  | 0.00      | 2       | 1             | 0         | 26260.98       | 0               |
-| 14 | 15691483  | Chin       | 549     | France      | Female    | 25     | 5   | 0.00      | 2       | 0             | 0         | 190857.79      | 0               |
-| 15 | 15600882  | Scott      | 635     | Spain       | Female    | 35     | 7   | 0.00      | 2       | 1             | 1         | 65951.65       | 0               |
-| 16 | 15643966  | Goforth    | 616     | Germany     | Male      | 45     | 3   | 143129.41 | 2       | 0             | 1         | 64327.26       | 0               |
-| 17 | 15737452  | Romeo      | 653     | Germany     | Male      | 58     | 1   | 132602.88 | 1       | 1             | 0         | 5097.67        | 1               |
-| 18 | 15788218  | Henderson  | 549     | Spain       | Female    | 24     | 9   | 0.00      | 2       | 1             | 1         | 14406.41       | 0               |
-| 19 | 15661507  | Muldrow    | 587     | Spain       | Male      | 45     | 6   | 0.00      | 1       | 0             | 0         | 158684.81      | 0               |
-| 20 | 15568982  | Hao        | 726     | France      | Female    | 24     | 6   | 0.00      | 2       | 1             | 1         | 54724.03       | 0               |
-| 21 | 15577657  | McDonald   | 732     | France      | Male      | 41     | 8   | 0.00      | 2       | 1             | 1         | 170886.17      | 0               |
-| 22 | 15597945  | Dellucci   | 636     | Spain       | Female    | 32     | 8   | 0.00      | 2       | 1             | 0         | 138555.46      | 0               |
-| 23 | 15699309  | Gerasimov  | 510     | Spain       | Female    | 38     | 4   | 0.00      | 1       | 1             | 0         | 118913.53      | 1               |
-| 24 | 15725737  | Mosman     | 669     | France      | Male      | 46     | 3   | 0.00      | 2       | 0             | 1         | 8487.75        | 0               |
-| 25 | 15625047  | Yen        | 846     | France      | Female    | 38     | 5   | 0.00      | 1       | 1             | 1         | 187616.16      | 0               |
-
-
-
-**Creating feature and target vectors**
-
-Looking at the features we can see that RowNumber, CustomerId, and Surname will have no relation with a customer leaving the bank. We drop them from X, which now contains the features indices from 3 to 12.
-
-```python
-X = dataset.iloc[:, 3:13].values
-```
-
-```python
-y = dataset.iloc[:, 13].values
-
-#Printing out the values of X --> Which contains the features
-#                           y --> Which contains the target variable
-print(pd.DataFrame(X[:10]))
-print()
-print(pd.DataFrame(y[:10]))
-```
-
-```markdown
-    0        1       2   3  4          5  6  7  8          9
-0  619   France  Female  42  2        0.0  1  1  1  101348.88
-1  608    Spain  Female  41  1   83807.86  1  0  1  112542.58
-2  502   France  Female  42  8   159660.8  3  1  0  113931.57
-3  699   France  Female  39  1        0.0  2  0  0   93826.63
-4  850    Spain  Female  43  2  125510.82  1  1  1    79084.1
-5  645    Spain    Male  44  8  113755.78  2  1  0  149756.71
-6  822   France    Male  50  7        0.0  2  1  1    10062.8
-7  376  Germany  Female  29  4  115046.74  4  1  0  119346.88
-8  501   France    Male  44  4  142051.07  2  0  1    74940.5
-9  684   France    Male  27  2  134603.88  1  1  1   71725.73
-
-   0
-0  1
-1  0
-2  1
-3  0
-4  0
-5  1
-6  0
-7  1
-8  0
-9  0
-```
-
-**Encoding categorical data**
-
-Neural networks can only handle numerical data. The categorical data in Geography and Gender won't work. You might recall there was a concept called get_dummies in pandas that would convert categorical variables to several binary columns instead. That's what we'll do here, but with something called LabelEncoder.
-
-```python
-from sklearn.preprocessing import LabelEncoder, OneHotEncoder
-from sklearn.compose import ColumnTransformer
-```
-
-```python
-dataset['Geography'].unique()
-```
-
-```python
-print(pd.DataFrame(X[:10]))
-```
-
-```markdown
-     0        1       2   3  4          5  6  7  8          9
-0  619   France  Female  42  2        0.0  1  1  1  101348.88
-1  608    Spain  Female  41  1   83807.86  1  0  1  112542.58
-2  502   France  Female  42  8   159660.8  3  1  0  113931.57
-3  699   France  Female  39  1        0.0  2  0  0   93826.63
-4  850    Spain  Female  43  2  125510.82  1  1  1    79084.1
-5  645    Spain    Male  44  8  113755.78  2  1  0  149756.71
-6  822   France    Male  50  7        0.0  2  1  1    10062.8
-7  376  Germany  Female  29  4  115046.74  4  1  0  119346.88
-8  501   France    Male  44  4  142051.07  2  0  1    74940.5
-9  684   France    Male  27  2  134603.88  1  1  1   71725.73
-```
-
-Creating label encoder object no. 1 to encode Geography name (index 1 in features) for France, Spain, Germany.
-
-Next, encoding Geography from string to just 3 numbers (0 = France, 1 = Spain, 2 = Germany).
-
-```python
-ct = ColumnTransformer([("Geography", OneHotEncoder(), [1])], remainder = 'passthrough')
-X = ct.fit_transform(X)
-print(pd.DataFrame(X[:10]))
-```
-
-```markdown
-    0    1    2    3       4   5  6          7  8  9  10         11
-0  1.0  0.0  0.0  619  Female  42  2        0.0  1  1  1  101348.88
-1  0.0  0.0  1.0  608  Female  41  1   83807.86  1  0  1  112542.58
-2  1.0  0.0  0.0  502  Female  42  8   159660.8  3  1  0  113931.57
-3  1.0  0.0  0.0  699  Female  39  1        0.0  2  0  0   93826.63
-4  0.0  0.0  1.0  850  Female  43  2  125510.82  1  1  1    79084.1
-5  0.0  0.0  1.0  645    Male  44  8  113755.78  2  1  0  149756.71
-6  1.0  0.0  0.0  822    Male  50  7        0.0  2  1  1    10062.8
-7  0.0  1.0  0.0  376  Female  29  4  115046.74  4  1  0  119346.88
-8  1.0  0.0  0.0  501    Male  44  4  142051.07  2  0  1    74940.5
-9  1.0  0.0  0.0  684    Male  27  2  134603.88  1  1  1   71725.73
-```
-
-Creating label encoder object no. 1 to encode Gender name (now index 4 in features) for Male, Female.
-
-Next, encoding Gender from string to 2 numbers (0 for Male and 1 for Female)
-
-```python
-ct = ColumnTransformer([("Gender", OneHotEncoder(), [4])], remainder = 'passthrough')
-X = ct.fit_transform(X)
-print(pd.DataFrame(X[:10]))
-```
-
-```markdown
-    0    1    2    3    4    5   6  7          8  9  10 11         12
-0  1.0  0.0  1.0  0.0  0.0  619  42  2        0.0  1  1  1  101348.88
-1  1.0  0.0  0.0  0.0  1.0  608  41  1   83807.86  1  0  1  112542.58
-2  1.0  0.0  1.0  0.0  0.0  502  42  8   159660.8  3  1  0  113931.57
-3  1.0  0.0  1.0  0.0  0.0  699  39  1        0.0  2  0  0   93826.63
-4  1.0  0.0  0.0  0.0  1.0  850  43  2  125510.82  1  1  1    79084.1
-5  0.0  1.0  0.0  0.0  1.0  645  44  8  113755.78  2  1  0  149756.71
-6  0.0  1.0  1.0  0.0  0.0  822  50  7        0.0  2  1  1    10062.8
-7  1.0  0.0  0.0  1.0  0.0  376  29  4  115046.74  4  1  0  119346.88
-8  0.0  1.0  1.0  0.0  0.0  501  44  4  142051.07  2  0  1    74940.5
-9  0.0  1.0  1.0  0.0  0.0  684  27  2  134603.88  1  1  1   71725.73
-```
-
-We remove the first column because two columns is enough to encode three countries. In other words, if those two columns are both 0, it must be the third country.
-
-```python
-X = X[:,1:]
-print(pd.DataFrame(X[:10]))
-```
-
-```markdown
-    0    1    2    3    4   5  6          7  8  9  10         11
-0  0.0  1.0  0.0  0.0  619  42  2        0.0  1  1  1  101348.88
-1  0.0  0.0  0.0  1.0  608  41  1   83807.86  1  0  1  112542.58
-2  0.0  1.0  0.0  0.0  502  42  8   159660.8  3  1  0  113931.57
-3  0.0  1.0  0.0  0.0  699  39  1        0.0  2  0  0   93826.63
-4  0.0  0.0  0.0  1.0  850  43  2  125510.82  1  1  1    79084.1
-5  1.0  0.0  0.0  1.0  645  44  8  113755.78  2  1  0  149756.71
-6  1.0  1.0  0.0  0.0  822  50  7        0.0  2  1  1    10062.8
-7  0.0  0.0  1.0  0.0  376  29  4  115046.74  4  1  0  119346.88
-8  1.0  1.0  0.0  0.0  501  44  4  142051.07  2  0  1    74940.5
-9  1.0  1.0  0.0  0.0  684  27  2  134603.88  1  1  1   71725.73
-```
-
-Splitting the dataset into the Training set and Test set
-
-```python
+from sklearn.datasets import make_moons
 from sklearn.model_selection import train_test_split
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 0)
-```
-
-```python
-# Feature Scaling
 from sklearn.preprocessing import StandardScaler
-sc = StandardScaler()
-X_train = sc.fit_transform(X_train)
-X_test = sc.transform(X_test)
-```
 
----
-### Let's Make an ANN!
-
-Let's list out the steps involved in training the ANN with Stochastic Gradient Descent.
-
-1) Randomly initialize the weights to small numbers close to but not 0.
-
-2) Input the 1st observation of your dataset in the input layer, with each feature in one input node.
-
-3) Forward-Propagation from left to right. The neurons are activated in a way that the impact of each neuron's activation is limited by the weights. Propagate the activations until getting the predicted result y.
-
-4) Compare the predicted result with the actual result. Measure the generated error.
-
-5) Back-Propagation: From right to left, error is back propagated. Update the weights according to how much they are responsible for the error. The learning rate tells us by how much we should update the weights.
-
-6) Repeat steps 1 to 5 and update the weights after each observation (reinforcement learning). Or: Repeat Steps 1 to 5, but update the weights only after a batch of observations (batch learning)
-
-7) When the whole training set is passed through the ANN, that completes an epoch. Redo more epochs.
-
-```python
-# Importing the Keras libraries and packages
-import keras
-from keras.models import Sequential # For building the Neural Network layer by layer
-from keras.layers import Dense # To randomly initialize the weights to small numbers close to 0(But not 0)
-```
-
-**Initializing the ANN**
-
-We will not put any parameter in the sequential object since we will be defining the layers manually.
-
-```python
-classifier = Sequential()
-```
-
-**Adding the input layer and the first hidden layer**
-
-How many nodes of the hidden layer do we actually need? There is no rule of thumb, but you can set the number of nodes in hidden layers as an average of the number of nodes in input and output layers, respectively. Here avg= (11+1)/2==>6 So set output dim=6
-
-The activation Function is Rectifier Activation Function.
-
-The kernel initializer will initialize the hidden layer weights uniformly.
-
-Input dim tells us the number of nodes in the input layer. This is done only once and won't be specified in further layers.
-
-```python
-classifier.add(Dense(activation="relu", input_dim=12, units=6, kernel_initializer="uniform"))
-```
-
-Adding the second hidden layer
-```python
-classifier.add(Dense(activation="relu", units=6, kernel_initializer="uniform"))
-```
-
-Adding the output layer
-
-The sigmoid activation function is used whenever we need the probabilities of 2 categories (similar to logistic regression). We switch to Softmax activation functions when the dependent variable has more than 2 categories.
-
-```python
-classifier.add(Dense(activation="sigmoid", units=1, kernel_initializer="uniform"))
-```
-
-Compiling the ANN
-
-The Adam optimizer is a form of stochastic gradient descent. Luckily for you, this does all of the math behind the scenes.
-
-```python
-classifier.compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['accuracy'])
-```
-
-**Fitting the ANN to the Training set**
-
-This step will take some time for large epoch values. A batch size of 10 means that the weights will update after every 10 observations. Epoch is a round of whole data flow through the network.
-
-```python
-classifier.fit(X_train, y_train, batch_size = 10, epochs = 100)
+from matplotlib import animation
+from IPython.display import HTML
+import networkx as nx
 ```
 
 ---
 
-### Making predictions and evaluating the model
+## Part 1: Build an Interesting Dataset
 
 ```python
-y_pred = classifier.predict(X_test)
+# Reproducibility
+np.random.seed(42)
+torch.manual_seed(42)
+
+# Nonlinear, visually interesting dataset
+X, y = make_moons(n_samples=800, noise=0.22, random_state=42)
+
+# Train/test split
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=42, stratify=y
+)
+
+# Scale features (important for stable optimization)
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# Convert to torch tensors
+X_train_t = torch.tensor(X_train, dtype=torch.float32)
+y_train_t = torch.tensor(y_train.reshape(-1, 1), dtype=torch.float32)
+X_test_t = torch.tensor(X_test, dtype=torch.float32)
+y_test_t = torch.tensor(y_test.reshape(-1, 1), dtype=torch.float32)
+
+plt.figure(figsize=(6, 5))
+plt.scatter(X_train[:, 0], X_train[:, 1], c=y_train, cmap='coolwarm', alpha=0.75)
+plt.title("Training Data: Two Moons")
+plt.xlabel("x1")
+plt.ylabel("x2")
+plt.show()
 ```
 
-If y_pred is larger than 0.5, it returns true (1). Otherwise false (2). This determines what the neural network "voted" regarding this customer.
-
-```python
-y_pred = (y_pred > 0.5)
-```
-
-Making the Confusion Matrix.
-```python
-from sklearn.metrics import confusion_matrix
-cm = confusion_matrix(y_test, y_pred)
-print(cm)
-tn, fp, fn, tp = cm.ravel()
-accuracy = (tn + tp) / (tn + tp + fn + fp)
-print(accuracy)
-```
-
-```markdown
-[[1538   57]
- [ 258  147]]
-0.8425
-```
-
-**Task: Play around with the batch size and epoch hyperparameters. Compare the accuracies**
-
+### Checkpoint
+You should see two interleaving crescent shapes. This is intentionally hard for a linear classifier, which makes the visuals more informative.
 
 ---
 
-### Predicting whether a new customer will stay at the bank
+## Part 2: Define the Neural Network (Linear Model)
 
-Input: Two binary columns for geography, two binary columns for gender, credit score, age, tenure, balance, num products, has credit card, is active member, estimated salary
+A linear classifier in PyTorch is still a neural network:
+- 2 input neurons (`x1`, `x2`)
+- 1 output neuron (logit)
+- Sigmoid activation for binary probability
 
 ```python
-#0 0 1 0 619 42 2 0 1 1 1 56700
-new_customer = [[0, 0, 1, 0, 619, 42, 2, 5000, 1, 1, 0, 50700]]
-new_customer = sc.transform(new_customer)
-new_prediction = classifier.predict(new_customer)
-print(new_prediction)
+class LinearBinaryNN(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.linear = nn.Linear(2, 1)  # 2 inputs -> 1 output
+
+    def forward(self, x):
+        logits = self.linear(x)
+        probs = torch.sigmoid(logits)
+        return probs
+
+model = LinearBinaryNN()
+criterion = nn.BCELoss()
+optimizer = optim.SGD(model.parameters(), lr=0.08)
 ```
 
-```markdown
-[[0.5705499]]
+---
+
+## Part 3: Train and Record Weight History
+
+We will store:
+- loss and accuracy per epoch
+- full parameter snapshots (`w1`, `w2`, `b`) for animation
+
+```python
+def evaluate(model, X_t, y_t):
+    model.eval()
+    with torch.no_grad():
+        probs = model(X_t)
+        preds = (probs >= 0.5).float()
+        acc = (preds.eq(y_t).float().mean()).item()
+        loss = criterion(probs, y_t).item()
+    return loss, acc
+
+num_epochs = 250
+history = {
+    "train_loss": [],
+    "train_acc": [],
+    "test_loss": [],
+    "test_acc": [],
+    "w1": [],
+    "w2": [],
+    "b": []
+}
+
+for epoch in range(num_epochs):
+    model.train()
+    optimizer.zero_grad()
+
+    probs = model(X_train_t)
+    loss = criterion(probs, y_train_t)
+    loss.backward()
+    optimizer.step()
+
+    # Metrics
+    tr_loss, tr_acc = evaluate(model, X_train_t, y_train_t)
+    te_loss, te_acc = evaluate(model, X_test_t, y_test_t)
+
+    # Save history
+    w = model.linear.weight.detach().numpy().flatten()
+    b = model.linear.bias.detach().item()
+
+    history["train_loss"].append(tr_loss)
+    history["train_acc"].append(tr_acc)
+    history["test_loss"].append(te_loss)
+    history["test_acc"].append(te_acc)
+    history["w1"].append(w[0])
+    history["w2"].append(w[1])
+    history["b"].append(b)
+
+print(f"Final test accuracy: {history['test_acc'][-1]:.3f}")
 ```
 
-----
+---
 
-### Validation
-- Training completes without errors and produces predictions on test data.
-- Confusion matrix and accuracy are reported.
-- New-customer inference runs with the same preprocessing pipeline.
+## Part 4: Visualization 1 - Training Curves
 
-### Extensions
-- Compare at least two ANN architectures (layer size/depth).
-- Tune epochs or batch size and compare performance.
-- Add precision/recall/F1 alongside accuracy.
+```python
+fig, ax = plt.subplots(1, 2, figsize=(12, 4))
 
-### Deliverable
-- Notebook with both perceptron and ANN sections executable end-to-end.
-- Reported metrics and one concise interpretation paragraph.
-- One saved table/image showing model performance summary.
+ax[0].plot(history["train_loss"], label="Train")
+ax[0].plot(history["test_loss"], label="Test")
+ax[0].set_title("Loss vs Epoch")
+ax[0].set_xlabel("Epoch")
+ax[0].set_ylabel("BCE Loss")
+ax[0].legend()
+
+ax[1].plot(history["train_acc"], label="Train")
+ax[1].plot(history["test_acc"], label="Test")
+ax[1].set_title("Accuracy vs Epoch")
+ax[1].set_xlabel("Epoch")
+ax[1].set_ylabel("Accuracy")
+ax[1].legend()
+
+plt.show()
+```
+
+---
+
+## Part 5: Visualization 2 - Decision Boundary Animation
+
+This shows how changing weights moves the classifier boundary over time.
+
+```python
+# Mesh grid for boundary plotting
+x_min, x_max = X_train[:, 0].min() - 1.0, X_train[:, 0].max() + 1.0
+y_min, y_max = X_train[:, 1].min() - 1.0, X_train[:, 1].max() + 1.0
+xx, yy = np.meshgrid(np.linspace(x_min, x_max, 220), np.linspace(y_min, y_max, 220))
+grid = np.c_[xx.ravel(), yy.ravel()]
+
+def predict_grid_from_params(grid_np, w1, w2, b):
+    z = w1 * grid_np[:, 0] + w2 * grid_np[:, 1] + b
+    p = 1 / (1 + np.exp(-z))
+    return p.reshape(xx.shape)
+
+fig, ax = plt.subplots(figsize=(7, 6))
+
+def animate_boundary(i):
+    ax.clear()
+    p = predict_grid_from_params(grid, history["w1"][i], history["w2"][i], history["b"][i])
+
+    ax.contourf(xx, yy, p, levels=25, cmap="coolwarm", alpha=0.35)
+    ax.contour(xx, yy, p, levels=[0.5], colors='black', linewidths=2)
+    ax.scatter(X_train[:, 0], X_train[:, 1], c=y_train, cmap='coolwarm', edgecolors='k', s=25)
+
+    ax.set_title(
+        f"Epoch {i+1} | train acc={history['train_acc'][i]:.3f} | "
+        f"w=[{history['w1'][i]:.2f}, {history['w2'][i]:.2f}] b={history['b'][i]:.2f}"
+    )
+    ax.set_xlabel("x1")
+    ax.set_ylabel("x2")
+
+ani = animation.FuncAnimation(fig, animate_boundary, frames=num_epochs, interval=90)
+plt.close(fig)
+HTML(ani.to_jshtml())
+```
+
+---
+
+## Part 6: Visualization 3 - Neural Network Graph + Live Weights
+
+Even though this is a simple network, we can still draw it and animate edge thickness/color by weight value.
+
+```python
+# Graph structure: x1, x2 -> y_hat
+G = nx.DiGraph()
+G.add_nodes_from(["x1", "x2", "y_hat"])
+G.add_edges_from([("x1", "y_hat"), ("x2", "y_hat")])
+
+pos = {
+    "x1": (-1, 0.5),
+    "x2": (-1, -0.5),
+    "y_hat": (1, 0.0)
+}
+
+fig, ax = plt.subplots(figsize=(6, 4))
+
+def edge_style(w):
+    color = "tab:red" if w >= 0 else "tab:blue"
+    width = 1 + 5 * min(abs(w), 2.0) / 2.0
+    return color, width
+
+
+def animate_nn(i):
+    ax.clear()
+    w1 = history["w1"][i]
+    w2 = history["w2"][i]
+    b = history["b"][i]
+
+    nx.draw_networkx_nodes(G, pos, node_size=2200, node_color="#f5f5f5", edgecolors="black", ax=ax)
+    nx.draw_networkx_labels(G, pos, font_size=11, ax=ax)
+
+    c1, lw1 = edge_style(w1)
+    c2, lw2 = edge_style(w2)
+
+    nx.draw_networkx_edges(
+        G, pos,
+        edgelist=[("x1", "y_hat")],
+        edge_color=c1,
+        width=lw1,
+        arrows=True,
+        arrowsize=20,
+        ax=ax
+    )
+    nx.draw_networkx_edges(
+        G, pos,
+        edgelist=[("x2", "y_hat")],
+        edge_color=c2,
+        width=lw2,
+        arrows=True,
+        arrowsize=20,
+        ax=ax
+    )
+
+    ax.text(0, 0.75, f"w1={w1:.3f}", ha="center")
+    ax.text(0, -0.75, f"w2={w2:.3f}", ha="center")
+    ax.text(1, -0.35, f"b={b:.3f}", ha="center")
+    ax.set_title(f"Neural Network Weights at Epoch {i+1}")
+    ax.axis("off")
+
+ani_nn = animation.FuncAnimation(fig, animate_nn, frames=num_epochs, interval=90)
+plt.close(fig)
+HTML(ani_nn.to_jshtml())
+```
+
+What to look for:
+- Red edges = positive influence, blue edges = negative influence.
+- Thicker edge = larger absolute weight.
+- As weights shift, the decision boundary in Part 5 rotates/translates.
+
+---
+
+## Part 7: Interactive Epoch Slider (Optional)
+
+If you want manual control instead of autoplay animation:
+
+```python
+import ipywidgets as widgets
+from ipywidgets import interact
+
+@interact(epoch=widgets.IntSlider(min=0, max=num_epochs-1, step=1, value=num_epochs-1))
+def show_epoch(epoch):
+    fig, ax = plt.subplots(1, 2, figsize=(12, 5))
+
+    # Left: decision boundary
+    p = predict_grid_from_params(grid, history["w1"][epoch], history["w2"][epoch], history["b"][epoch])
+    ax[0].contourf(xx, yy, p, levels=25, cmap="coolwarm", alpha=0.35)
+    ax[0].contour(xx, yy, p, levels=[0.5], colors='black', linewidths=2)
+    ax[0].scatter(X_train[:, 0], X_train[:, 1], c=y_train, cmap='coolwarm', edgecolors='k', s=20)
+    ax[0].set_title(f"Decision Boundary @ Epoch {epoch+1}")
+    ax[0].set_xlabel("x1")
+    ax[0].set_ylabel("x2")
+
+    # Right: parameter history with marker
+    ax[1].plot(history["w1"], label="w1")
+    ax[1].plot(history["w2"], label="w2")
+    ax[1].plot(history["b"], label="b")
+    ax[1].axvline(epoch, color="black", linestyle="--")
+    ax[1].set_title("Parameter Trajectories")
+    ax[1].set_xlabel("Epoch")
+    ax[1].set_ylabel("Value")
+    ax[1].legend()
+
+    plt.show()
+```
+
+---
+
+## Part 8: Linear vs Nonlinear (Side-by-Side)
+
+Now compare:
+- Linear model: `nn.Linear(2, 1)` + sigmoid
+- Nonlinear model: `2 -> 8 -> 1` with `ReLU`
+
+```python
+class TinyMLP(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(2, 8),
+            nn.ReLU(),
+            nn.Linear(8, 1),
+            nn.Sigmoid()
+        )
+
+    def forward(self, x):
+        return self.net(x)
+
+
+def train_model(model, X_train_t, y_train_t, X_test_t, y_test_t, lr=0.05, epochs=300):
+    criterion = nn.BCELoss()
+    optimizer = optim.Adam(model.parameters(), lr=lr)
+
+    train_loss, test_loss, train_acc, test_acc = [], [], [], []
+    model.train()
+
+    for _ in range(epochs):
+        optimizer.zero_grad()
+        probs = model(X_train_t)
+        loss = criterion(probs, y_train_t)
+        loss.backward()
+        optimizer.step()
+
+        with torch.no_grad():
+            tr_probs = model(X_train_t)
+            te_probs = model(X_test_t)
+
+            tr_preds = (tr_probs >= 0.5).float()
+            te_preds = (te_probs >= 0.5).float()
+
+            train_loss.append(criterion(tr_probs, y_train_t).item())
+            test_loss.append(criterion(te_probs, y_test_t).item())
+            train_acc.append(tr_preds.eq(y_train_t).float().mean().item())
+            test_acc.append(te_preds.eq(y_test_t).float().mean().item())
+
+    return {
+        "train_loss": train_loss,
+        "test_loss": test_loss,
+        "train_acc": train_acc,
+        "test_acc": test_acc
+    }
+
+
+def predict_grid(model, xx, yy):
+    model.eval()
+    grid_points = np.c_[xx.ravel(), yy.ravel()]
+    with torch.no_grad():
+        probs = model(torch.tensor(grid_points, dtype=torch.float32)).numpy().reshape(xx.shape)
+    return probs
+
+
+# Train both models from fresh initialization
+torch.manual_seed(42)
+linear_model = LinearBinaryNN()
+linear_hist = train_model(linear_model, X_train_t, y_train_t, X_test_t, y_test_t, lr=0.05, epochs=300)
+
+torch.manual_seed(42)
+mlp_model = TinyMLP()
+mlp_hist = train_model(mlp_model, X_train_t, y_train_t, X_test_t, y_test_t, lr=0.01, epochs=300)
+
+print(f"Linear final test acc: {linear_hist['test_acc'][-1]:.3f}")
+print(f"MLP final test acc:    {mlp_hist['test_acc'][-1]:.3f}")
+```
+
+```python
+# Side-by-side boundary comparison
+fig, ax = plt.subplots(1, 2, figsize=(13, 5))
+
+p_linear = predict_grid(linear_model, xx, yy)
+p_mlp = predict_grid(mlp_model, xx, yy)
+
+ax[0].contourf(xx, yy, p_linear, levels=25, cmap="coolwarm", alpha=0.35)
+ax[0].contour(xx, yy, p_linear, levels=[0.5], colors="black", linewidths=2)
+ax[0].scatter(X_train[:, 0], X_train[:, 1], c=y_train, cmap="coolwarm", edgecolors="k", s=20)
+ax[0].set_title(f"Linear Model | test acc={linear_hist['test_acc'][-1]:.3f}")
+ax[0].set_xlabel("x1")
+ax[0].set_ylabel("x2")
+
+ax[1].contourf(xx, yy, p_mlp, levels=25, cmap="coolwarm", alpha=0.35)
+ax[1].contour(xx, yy, p_mlp, levels=[0.5], colors="black", linewidths=2)
+ax[1].scatter(X_train[:, 0], X_train[:, 1], c=y_train, cmap="coolwarm", edgecolors="k", s=20)
+ax[1].set_title(f"Tiny MLP (2->8->1) | test acc={mlp_hist['test_acc'][-1]:.3f}")
+ax[1].set_xlabel("x1")
+ax[1].set_ylabel("x2")
+
+plt.suptitle("Linear vs Nonlinear Decision Boundaries")
+plt.tight_layout()
+plt.show()
+```
+
+```python
+# Optional: compare learning curves
+fig, ax = plt.subplots(1, 2, figsize=(12, 4))
+
+ax[0].plot(linear_hist["test_loss"], label="Linear")
+ax[0].plot(mlp_hist["test_loss"], label="Tiny MLP")
+ax[0].set_title("Test Loss")
+ax[0].set_xlabel("Epoch")
+ax[0].set_ylabel("BCE Loss")
+ax[0].legend()
+
+ax[1].plot(linear_hist["test_acc"], label="Linear")
+ax[1].plot(mlp_hist["test_acc"], label="Tiny MLP")
+ax[1].set_title("Test Accuracy")
+ax[1].set_xlabel("Epoch")
+ax[1].set_ylabel("Accuracy")
+ax[1].legend()
+
+plt.show()
+```
+
+Expected takeaway:
+- Linear model learns one straight split.
+- Tiny MLP bends the boundary to match the moon shapes better.
+
+---
+
+## Tasks
+1. Change `noise` in `make_moons` to `0.05`, `0.22`, and `0.35`. Compare final accuracy and boundary shape.
+2. Try learning rates `0.01`, `0.08`, `0.2`. Explain one unstable run.
+3. Increase epochs to `600` and inspect whether weights stabilize.
+4. In Part 8, change hidden size from `8` to `3` and `32`. Compare boundary smoothness and generalization.
+
+## Validation
+- Training runs end-to-end with PyTorch.
+- Final test accuracy is printed.
+- Boundary animation updates as parameters change.
+- Network graph animation updates edge styles as weights change.
+- Side-by-side linear vs MLP boundary plot renders correctly.
+
+## Deliverable
+- Notebook with all cells executed.
+- One screenshot/GIF of decision-boundary animation.
+- One short paragraph explaining how `w1`, `w2`, and `b` changed model behavior.
