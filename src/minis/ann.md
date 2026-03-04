@@ -8,35 +8,34 @@ prereqs:
   - Artificial Neural Networks theory lesson
   - Basic Python and NumPy
 outcomes:
-  - Train a PyTorch linear model as a single-neuron neural network
-  - Visualize decision boundaries and model confidence during training
-  - Visualize network structure and weight updates over epochs
+  - Train a nonlinear PyTorch MLP for binary classification
+  - Visualize decision boundaries and network weight updates during training
+  - Compare nonlinear and linear models on the same dataset
 difficulty: Intermediate
 ---
 
-## Artificial Neural Network Mini: Dynamic Linear Classifier in PyTorch
+## Artificial Neural Network Mini: MLP First, Linear Comparison Second
 
 If you have not done the ANN theory lesson yet, start [here](https://astarryknight.github.io/ai-ml/src/theory/ann.html).
 
 ### Objective
-Build and train a neural network with PyTorch (a linear layer + sigmoid), and make training visual.
+Train a small nonlinear neural network in PyTorch, visualize how it learns, and then compare it to a linear baseline.
 
 ### Why this dataset?
-Instead of bank churn, we will use a 2D moon-shaped dataset generated with `sklearn.datasets.make_moons`.
-
-Why this is better for learning:
+We use `sklearn.datasets.make_moons` because it is perfect for visual intuition:
 - You can plot every point directly.
-- You can watch the decision boundary move while training.
-- You can see where a linear neural network succeeds and fails.
+- You can watch the decision boundary evolve during training.
+- It clearly shows why nonlinear models can outperform linear ones.
 
 ### Setup
-Run in Google Colab (or local Python environment):
+Run in Google Colab (or local Python):
 
 ```python
 !pip -q install torch scikit-learn matplotlib ipywidgets networkx
 ```
 
 ```python
+import copy
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
@@ -49,6 +48,8 @@ from sklearn.preprocessing import StandardScaler
 
 from matplotlib import animation
 from IPython.display import HTML
+import ipywidgets as widgets
+from ipywidgets import interact
 import networkx as nx
 ```
 
@@ -61,7 +62,7 @@ import networkx as nx
 np.random.seed(42)
 torch.manual_seed(42)
 
-# Nonlinear, visually interesting dataset
+# Nonlinear, visually rich dataset
 X, y = make_moons(n_samples=800, noise=0.22, random_state=42)
 
 # Train/test split
@@ -69,12 +70,12 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.25, random_state=42, stratify=y
 )
 
-# Scale features (important for stable optimization)
+# Feature scaling
 scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
 
-# Convert to torch tensors
+# Torch tensors
 X_train_t = torch.tensor(X_train, dtype=torch.float32)
 y_train_t = torch.tensor(y_train.reshape(-1, 1), dtype=torch.float32)
 X_test_t = torch.tensor(X_test, dtype=torch.float32)
@@ -88,51 +89,51 @@ plt.ylabel("x2")
 plt.show()
 ```
 
-### Checkpoint
-You should see two interleaving crescent shapes. This is intentionally hard for a linear classifier, which makes the visuals more informative.
-
 ---
 
-## Part 2: Define the Neural Network (Linear Model)
+## Part 2: Define the Nonlinear Neural Network (MLP)
 
-A linear classifier in PyTorch is still a neural network:
-- 2 input neurons (`x1`, `x2`)
-- 1 output neuron (logit)
-- Sigmoid activation for binary probability
+We will start with a tiny MLP:
+- 2 inputs (`x1`, `x2`)
+- 1 hidden layer with 4 neurons + ReLU
+- 1 output neuron + sigmoid
 
 ```python
-class LinearBinaryNN(nn.Module):
+class TinyMLP(nn.Module):
     def __init__(self):
         super().__init__()
-        self.linear = nn.Linear(2, 1)  # 2 inputs -> 1 output
+        self.fc1 = nn.Linear(2, 4)
+        self.fc2 = nn.Linear(4, 1)
 
     def forward(self, x):
-        logits = self.linear(x)
-        probs = torch.sigmoid(logits)
-        return probs
+        h = torch.relu(self.fc1(x))
+        out = torch.sigmoid(self.fc2(h))
+        return out
 
-model = LinearBinaryNN()
+
 criterion = nn.BCELoss()
-optimizer = optim.SGD(model.parameters(), lr=0.08)
+model = TinyMLP()
+optimizer = optim.Adam(model.parameters(), lr=0.01)
 ```
 
 ---
 
-## Part 3: Train and Record Weight History
+## Part 3: Train and Record Parameter Snapshots
 
-We will store:
-- loss and accuracy per epoch
-- full parameter snapshots (`w1`, `w2`, `b`) for animation
+We record:
+- train/test loss and accuracy
+- full model parameter snapshots each epoch (for animation)
 
 ```python
-def evaluate(model, X_t, y_t):
+def evaluate(model, X_t, y_t, criterion):
     model.eval()
     with torch.no_grad():
         probs = model(X_t)
         preds = (probs >= 0.5).float()
-        acc = (preds.eq(y_t).float().mean()).item()
         loss = criterion(probs, y_t).item()
+        acc = preds.eq(y_t).float().mean().item()
     return loss, acc
+
 
 num_epochs = 250
 history = {
@@ -140,9 +141,7 @@ history = {
     "train_acc": [],
     "test_loss": [],
     "test_acc": [],
-    "w1": [],
-    "w2": [],
-    "b": []
+    "states": []
 }
 
 for epoch in range(num_epochs):
@@ -154,23 +153,16 @@ for epoch in range(num_epochs):
     loss.backward()
     optimizer.step()
 
-    # Metrics
-    tr_loss, tr_acc = evaluate(model, X_train_t, y_train_t)
-    te_loss, te_acc = evaluate(model, X_test_t, y_test_t)
-
-    # Save history
-    w = model.linear.weight.detach().numpy().flatten()
-    b = model.linear.bias.detach().item()
+    tr_loss, tr_acc = evaluate(model, X_train_t, y_train_t, criterion)
+    te_loss, te_acc = evaluate(model, X_test_t, y_test_t, criterion)
 
     history["train_loss"].append(tr_loss)
     history["train_acc"].append(tr_acc)
     history["test_loss"].append(te_loss)
     history["test_acc"].append(te_acc)
-    history["w1"].append(w[0])
-    history["w2"].append(w[1])
-    history["b"].append(b)
+    history["states"].append(copy.deepcopy(model.state_dict()))
 
-print(f"Final test accuracy: {history['test_acc'][-1]:.3f}")
+print(f"Final MLP test accuracy: {history['test_acc'][-1]:.3f}")
 ```
 
 ---
@@ -199,35 +191,36 @@ plt.show()
 
 ---
 
-## Part 5: Visualization 2 - Decision Boundary Animation
-
-This shows how changing weights moves the classifier boundary over time.
+## Part 5: Visualization 2 - Decision Boundary Animation (MLP)
 
 ```python
-# Mesh grid for boundary plotting
+# Grid for boundary plots
 x_min, x_max = X_train[:, 0].min() - 1.0, X_train[:, 0].max() + 1.0
 y_min, y_max = X_train[:, 1].min() - 1.0, X_train[:, 1].max() + 1.0
 xx, yy = np.meshgrid(np.linspace(x_min, x_max, 220), np.linspace(y_min, y_max, 220))
 grid = np.c_[xx.ravel(), yy.ravel()]
+grid_t = torch.tensor(grid, dtype=torch.float32)
 
-def predict_grid_from_params(grid_np, w1, w2, b):
-    z = w1 * grid_np[:, 0] + w2 * grid_np[:, 1] + b
-    p = 1 / (1 + np.exp(-z))
-    return p.reshape(xx.shape)
+# Temporary model used for snapshot playback
+tmp_model = TinyMLP()
 
 fig, ax = plt.subplots(figsize=(7, 6))
 
 def animate_boundary(i):
     ax.clear()
-    p = predict_grid_from_params(grid, history["w1"][i], history["w2"][i], history["b"][i])
+
+    tmp_model.load_state_dict(history["states"][i])
+    tmp_model.eval()
+
+    with torch.no_grad():
+        p = tmp_model(grid_t).numpy().reshape(xx.shape)
 
     ax.contourf(xx, yy, p, levels=25, cmap="coolwarm", alpha=0.35)
     ax.contour(xx, yy, p, levels=[0.5], colors='black', linewidths=2)
     ax.scatter(X_train[:, 0], X_train[:, 1], c=y_train, cmap='coolwarm', edgecolors='k', s=25)
 
     ax.set_title(
-        f"Epoch {i+1} | train acc={history['train_acc'][i]:.3f} | "
-        f"w=[{history['w1'][i]:.2f}, {history['w2'][i]:.2f}] b={history['b'][i]:.2f}"
+        f"MLP Decision Boundary | Epoch {i+1} | train acc={history['train_acc'][i]:.3f}"
     )
     ax.set_xlabel("x1")
     ax.set_ylabel("x2")
@@ -239,65 +232,88 @@ HTML(ani.to_jshtml())
 
 ---
 
-## Part 6: Visualization 3 - Neural Network Graph + Live Weights
+## Part 6: Visualization 3 - Network Graph + Live Weight Changes (MLP)
 
-Even though this is a simple network, we can still draw it and animate edge thickness/color by weight value.
+This graph shows all MLP connections (`2 -> 4 -> 1`).
+- Red edge: positive weight
+- Blue edge: negative weight
+- Thicker edge: larger absolute weight
 
 ```python
-# Graph structure: x1, x2 -> y_hat
+# Build graph nodes/edges
+inputs = ["x1", "x2"]
+hiddens = [f"h{i+1}" for i in range(4)]
+output = ["y_hat"]
+
 G = nx.DiGraph()
-G.add_nodes_from(["x1", "x2", "y_hat"])
-G.add_edges_from([("x1", "y_hat"), ("x2", "y_hat")])
+G.add_nodes_from(inputs + hiddens + output)
+
+for x in inputs:
+    for h in hiddens:
+        G.add_edge(x, h)
+for h in hiddens:
+    G.add_edge(h, "y_hat")
 
 pos = {
-    "x1": (-1, 0.5),
-    "x2": (-1, -0.5),
-    "y_hat": (1, 0.0)
+    "x1": (-2, 0.7),
+    "x2": (-2, -0.7),
+    "h1": (0, 1.2),
+    "h2": (0, 0.4),
+    "h3": (0, -0.4),
+    "h4": (0, -1.2),
+    "y_hat": (2, 0),
 }
 
-fig, ax = plt.subplots(figsize=(6, 4))
 
 def edge_style(w):
     color = "tab:red" if w >= 0 else "tab:blue"
-    width = 1 + 5 * min(abs(w), 2.0) / 2.0
+    width = 0.8 + 4.2 * min(abs(w), 2.0) / 2.0
     return color, width
 
 
+fig, ax = plt.subplots(figsize=(8, 5))
+
 def animate_nn(i):
     ax.clear()
-    w1 = history["w1"][i]
-    w2 = history["w2"][i]
-    b = history["b"][i]
+    state = history["states"][i]
 
-    nx.draw_networkx_nodes(G, pos, node_size=2200, node_color="#f5f5f5", edgecolors="black", ax=ax)
-    nx.draw_networkx_labels(G, pos, font_size=11, ax=ax)
+    # fc1: [4, 2], fc2: [1, 4]
+    w1 = state["fc1.weight"].cpu().numpy()
+    w2 = state["fc2.weight"].cpu().numpy()[0]
 
-    c1, lw1 = edge_style(w1)
-    c2, lw2 = edge_style(w2)
+    nx.draw_networkx_nodes(G, pos, node_size=1500, node_color="#f5f5f5", edgecolors="black", ax=ax)
+    nx.draw_networkx_labels(G, pos, font_size=10, ax=ax)
 
-    nx.draw_networkx_edges(
-        G, pos,
-        edgelist=[("x1", "y_hat")],
-        edge_color=c1,
-        width=lw1,
-        arrows=True,
-        arrowsize=20,
-        ax=ax
-    )
-    nx.draw_networkx_edges(
-        G, pos,
-        edgelist=[("x2", "y_hat")],
-        edge_color=c2,
-        width=lw2,
-        arrows=True,
-        arrowsize=20,
-        ax=ax
-    )
+    # Draw input -> hidden edges
+    for hi, h in enumerate(hiddens):
+        for xi, x in enumerate(inputs):
+            w = w1[hi, xi]
+            c, lw = edge_style(w)
+            nx.draw_networkx_edges(
+                G, pos,
+                edgelist=[(x, h)],
+                edge_color=c,
+                width=lw,
+                arrows=True,
+                arrowsize=12,
+                ax=ax
+            )
 
-    ax.text(0, 0.75, f"w1={w1:.3f}", ha="center")
-    ax.text(0, -0.75, f"w2={w2:.3f}", ha="center")
-    ax.text(1, -0.35, f"b={b:.3f}", ha="center")
-    ax.set_title(f"Neural Network Weights at Epoch {i+1}")
+    # Draw hidden -> output edges
+    for hi, h in enumerate(hiddens):
+        w = w2[hi]
+        c, lw = edge_style(w)
+        nx.draw_networkx_edges(
+            G, pos,
+            edgelist=[(h, "y_hat")],
+            edge_color=c,
+            width=lw,
+            arrows=True,
+            arrowsize=12,
+            ax=ax
+        )
+
+    ax.set_title(f"MLP Weights at Epoch {i+1}")
     ax.axis("off")
 
 ani_nn = animation.FuncAnimation(fig, animate_nn, frames=num_epochs, interval=90)
@@ -305,42 +321,34 @@ plt.close(fig)
 HTML(ani_nn.to_jshtml())
 ```
 
-What to look for:
-- Red edges = positive influence, blue edges = negative influence.
-- Thicker edge = larger absolute weight.
-- As weights shift, the decision boundary in Part 5 rotates/translates.
-
 ---
 
 ## Part 7: Interactive Epoch Slider (Optional)
 
-If you want manual control instead of autoplay animation:
-
 ```python
-import ipywidgets as widgets
-from ipywidgets import interact
-
 @interact(epoch=widgets.IntSlider(min=0, max=num_epochs-1, step=1, value=num_epochs-1))
 def show_epoch(epoch):
+    replay_model = TinyMLP()
+    replay_model.load_state_dict(history["states"][epoch])
+    replay_model.eval()
+
+    with torch.no_grad():
+        p = replay_model(grid_t).numpy().reshape(xx.shape)
+
     fig, ax = plt.subplots(1, 2, figsize=(12, 5))
 
-    # Left: decision boundary
-    p = predict_grid_from_params(grid, history["w1"][epoch], history["w2"][epoch], history["b"][epoch])
     ax[0].contourf(xx, yy, p, levels=25, cmap="coolwarm", alpha=0.35)
     ax[0].contour(xx, yy, p, levels=[0.5], colors='black', linewidths=2)
     ax[0].scatter(X_train[:, 0], X_train[:, 1], c=y_train, cmap='coolwarm', edgecolors='k', s=20)
-    ax[0].set_title(f"Decision Boundary @ Epoch {epoch+1}")
+    ax[0].set_title(f"MLP Boundary @ Epoch {epoch+1}")
     ax[0].set_xlabel("x1")
     ax[0].set_ylabel("x2")
 
-    # Right: parameter history with marker
-    ax[1].plot(history["w1"], label="w1")
-    ax[1].plot(history["w2"], label="w2")
-    ax[1].plot(history["b"], label="b")
+    ax[1].plot(history["test_acc"], label="MLP test acc")
     ax[1].axvline(epoch, color="black", linestyle="--")
-    ax[1].set_title("Parameter Trajectories")
+    ax[1].set_title("MLP Test Accuracy Trajectory")
     ax[1].set_xlabel("Epoch")
-    ax[1].set_ylabel("Value")
+    ax[1].set_ylabel("Accuracy")
     ax[1].legend()
 
     plt.show()
@@ -348,149 +356,111 @@ def show_epoch(epoch):
 
 ---
 
-## Part 8: Linear vs Nonlinear (Side-by-Side)
+## Part 8: End Comparison - Linear Model vs MLP
 
-Now compare:
-- Linear model: `nn.Linear(2, 1)` + sigmoid
-- Nonlinear model: `2 -> 8 -> 1` with `ReLU`
+Now use a linear baseline and compare it to the already-trained MLP.
 
 ```python
-class TinyMLP(nn.Module):
+class LinearBinaryNN(nn.Module):
     def __init__(self):
         super().__init__()
-        self.net = nn.Sequential(
-            nn.Linear(2, 8),
-            nn.ReLU(),
-            nn.Linear(8, 1),
-            nn.Sigmoid()
-        )
+        self.linear = nn.Linear(2, 1)
 
     def forward(self, x):
-        return self.net(x)
+        return torch.sigmoid(self.linear(x))
 
 
-def train_model(model, X_train_t, y_train_t, X_test_t, y_test_t, lr=0.05, epochs=300):
+def train_binary_model(model, X_train_t, y_train_t, X_test_t, y_test_t, lr=0.01, epochs=250):
     criterion = nn.BCELoss()
     optimizer = optim.Adam(model.parameters(), lr=lr)
-
-    train_loss, test_loss, train_acc, test_acc = [], [], [], []
-    model.train()
+    history_local = {"test_loss": [], "test_acc": []}
 
     for _ in range(epochs):
+        model.train()
         optimizer.zero_grad()
         probs = model(X_train_t)
         loss = criterion(probs, y_train_t)
         loss.backward()
         optimizer.step()
 
+        model.eval()
         with torch.no_grad():
-            tr_probs = model(X_train_t)
             te_probs = model(X_test_t)
-
-            tr_preds = (tr_probs >= 0.5).float()
             te_preds = (te_probs >= 0.5).float()
+            history_local["test_loss"].append(criterion(te_probs, y_test_t).item())
+            history_local["test_acc"].append(te_preds.eq(y_test_t).float().mean().item())
 
-            train_loss.append(criterion(tr_probs, y_train_t).item())
-            test_loss.append(criterion(te_probs, y_test_t).item())
-            train_acc.append(tr_preds.eq(y_train_t).float().mean().item())
-            test_acc.append(te_preds.eq(y_test_t).float().mean().item())
-
-    return {
-        "train_loss": train_loss,
-        "test_loss": test_loss,
-        "train_acc": train_acc,
-        "test_acc": test_acc
-    }
+    return history_local
 
 
 def predict_grid(model, xx, yy):
     model.eval()
-    grid_points = np.c_[xx.ravel(), yy.ravel()]
+    points = np.c_[xx.ravel(), yy.ravel()]
     with torch.no_grad():
-        probs = model(torch.tensor(grid_points, dtype=torch.float32)).numpy().reshape(xx.shape)
+        probs = model(torch.tensor(points, dtype=torch.float32)).numpy().reshape(xx.shape)
     return probs
 
 
-# Train both models from fresh initialization
+# Train linear baseline
 torch.manual_seed(42)
 linear_model = LinearBinaryNN()
-linear_hist = train_model(linear_model, X_train_t, y_train_t, X_test_t, y_test_t, lr=0.05, epochs=300)
+linear_hist = train_binary_model(
+    linear_model,
+    X_train_t, y_train_t,
+    X_test_t, y_test_t,
+    lr=0.01,
+    epochs=num_epochs,
+)
 
-torch.manual_seed(42)
-mlp_model = TinyMLP()
-mlp_hist = train_model(mlp_model, X_train_t, y_train_t, X_test_t, y_test_t, lr=0.01, epochs=300)
+mlp_final_acc = history["test_acc"][-1]
+linear_final_acc = linear_hist["test_acc"][-1]
 
-print(f"Linear final test acc: {linear_hist['test_acc'][-1]:.3f}")
-print(f"MLP final test acc:    {mlp_hist['test_acc'][-1]:.3f}")
+print(f"MLP final test accuracy:    {mlp_final_acc:.3f}")
+print(f"Linear final test accuracy: {linear_final_acc:.3f}")
 ```
 
 ```python
-# Side-by-side boundary comparison
+# Final boundary comparison
+p_mlp = predict_grid(model, xx, yy)
+p_linear = predict_grid(linear_model, xx, yy)
+
 fig, ax = plt.subplots(1, 2, figsize=(13, 5))
 
-p_linear = predict_grid(linear_model, xx, yy)
-p_mlp = predict_grid(mlp_model, xx, yy)
-
-ax[0].contourf(xx, yy, p_linear, levels=25, cmap="coolwarm", alpha=0.35)
-ax[0].contour(xx, yy, p_linear, levels=[0.5], colors="black", linewidths=2)
-ax[0].scatter(X_train[:, 0], X_train[:, 1], c=y_train, cmap="coolwarm", edgecolors="k", s=20)
-ax[0].set_title(f"Linear Model | test acc={linear_hist['test_acc'][-1]:.3f}")
+ax[0].contourf(xx, yy, p_mlp, levels=25, cmap="coolwarm", alpha=0.35)
+ax[0].contour(xx, yy, p_mlp, levels=[0.5], colors="black", linewidths=2)
+ax[0].scatter(X_train[:, 0], X_train[:, 1], c=y_train, cmap="coolwarm", edgecolors='k', s=20)
+ax[0].set_title(f"Tiny MLP (2->4->1) | test acc={mlp_final_acc:.3f}")
 ax[0].set_xlabel("x1")
 ax[0].set_ylabel("x2")
 
-ax[1].contourf(xx, yy, p_mlp, levels=25, cmap="coolwarm", alpha=0.35)
-ax[1].contour(xx, yy, p_mlp, levels=[0.5], colors="black", linewidths=2)
-ax[1].scatter(X_train[:, 0], X_train[:, 1], c=y_train, cmap="coolwarm", edgecolors="k", s=20)
-ax[1].set_title(f"Tiny MLP (2->8->1) | test acc={mlp_hist['test_acc'][-1]:.3f}")
+ax[1].contourf(xx, yy, p_linear, levels=25, cmap="coolwarm", alpha=0.35)
+ax[1].contour(xx, yy, p_linear, levels=[0.5], colors="black", linewidths=2)
+ax[1].scatter(X_train[:, 0], X_train[:, 1], c=y_train, cmap="coolwarm", edgecolors='k', s=20)
+ax[1].set_title(f"Linear Model (2->1) | test acc={linear_final_acc:.3f}")
 ax[1].set_xlabel("x1")
 ax[1].set_ylabel("x2")
 
-plt.suptitle("Linear vs Nonlinear Decision Boundaries")
+plt.suptitle("Nonlinear vs Linear: Decision Boundaries")
 plt.tight_layout()
 plt.show()
 ```
 
-```python
-# Optional: compare learning curves
-fig, ax = plt.subplots(1, 2, figsize=(12, 4))
-
-ax[0].plot(linear_hist["test_loss"], label="Linear")
-ax[0].plot(mlp_hist["test_loss"], label="Tiny MLP")
-ax[0].set_title("Test Loss")
-ax[0].set_xlabel("Epoch")
-ax[0].set_ylabel("BCE Loss")
-ax[0].legend()
-
-ax[1].plot(linear_hist["test_acc"], label="Linear")
-ax[1].plot(mlp_hist["test_acc"], label="Tiny MLP")
-ax[1].set_title("Test Accuracy")
-ax[1].set_xlabel("Epoch")
-ax[1].set_ylabel("Accuracy")
-ax[1].legend()
-
-plt.show()
-```
-
-Expected takeaway:
-- Linear model learns one straight split.
-- Tiny MLP bends the boundary to match the moon shapes better.
-
 ---
 
 ## Tasks
-1. Change `noise` in `make_moons` to `0.05`, `0.22`, and `0.35`. Compare final accuracy and boundary shape.
-2. Try learning rates `0.01`, `0.08`, `0.2`. Explain one unstable run.
-3. Increase epochs to `600` and inspect whether weights stabilize.
-4. In Part 8, change hidden size from `8` to `3` and `32`. Compare boundary smoothness and generalization.
+1. Change hidden width in the MLP (`4`, `8`, `16`) and compare boundaries.
+2. Increase moon noise (`0.05`, `0.22`, `0.35`) and compare MLP vs linear accuracy gaps.
+3. Try MLP learning rates (`0.001`, `0.01`, `0.05`) and describe one unstable run.
+4. Explain in 3-4 sentences why the nonlinear model fits this dataset better.
 
 ## Validation
-- Training runs end-to-end with PyTorch.
-- Final test accuracy is printed.
-- Boundary animation updates as parameters change.
-- Network graph animation updates edge styles as weights change.
-- Side-by-side linear vs MLP boundary plot renders correctly.
+- MLP training runs end-to-end and reports test accuracy.
+- MLP boundary animation updates as parameters change.
+- MLP network-graph animation updates edge style over epochs.
+- Final side-by-side linear vs MLP plot renders correctly.
 
 ## Deliverable
 - Notebook with all cells executed.
-- One screenshot/GIF of decision-boundary animation.
-- One short paragraph explaining how `w1`, `w2`, and `b` changed model behavior.
+- One screenshot/GIF of the MLP boundary animation.
+- One screenshot of the final linear vs MLP boundary comparison.
+- One short paragraph interpreting the comparison.
