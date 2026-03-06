@@ -50,6 +50,12 @@ from sklearn.preprocessing import StandardScaler
 
 ## Part 1: Build an Interesting Dataset
 
+This section prepares the data so the network can learn from it cleanly:
+- `make_moons(...)` creates a two-class dataset with a curved shape, which is useful because a straight line will struggle to separate it.
+- `train_test_split(...)` holds out part of the data for testing, so we can measure whether the model generalizes beyond the examples it trained on.
+- `StandardScaler()` rescales each feature so values are centered near `0` with similar spread. Neural networks usually train more smoothly when inputs are on a comparable scale.
+- `torch.tensor(...)` converts NumPy arrays into PyTorch tensors, which are the objects the neural network and optimizer expect.
+
 ```python
 # Reproducibility
 np.random.seed(42)
@@ -82,6 +88,13 @@ plt.ylabel("x2")
 plt.show()
 ```
 
+Code walkthrough:
+- `np.random.seed(42)` and `torch.manual_seed(42)` fix the random number generators so you and another learner can reproduce nearly the same dataset and training run.
+- `X` stores the input points and `y` stores the labels `0` or `1`.
+- `stratify=y` keeps the class balance similar in both the training set and the test set.
+- `y.reshape(-1, 1)` changes labels from a 1D list like `[0, 1, 1, ...]` into a column shape that matches the model output.
+- The scatter plot gives a visual answer to: "What pattern is the model trying to learn?"
+
 ---
 
 ## Part 2: Define the Nonlinear Neural Network (MLP)
@@ -90,6 +103,12 @@ We will start with a tiny MLP:
 - 2 inputs (`x1`, `x2`)
 - 1 hidden layer with 4 neurons + ReLU
 - 1 output neuron + sigmoid
+
+Conceptually, the model works in two steps:
+- The first layer mixes the two input features into four hidden values.
+- The ReLU activation lets the model create nonlinear shapes instead of only straight-line boundaries.
+- The second layer combines those hidden values into one score.
+- The sigmoid squashes that score into a probability between `0` and `1`.
 
 ```python
 class TinyMLP(nn.Module):
@@ -109,6 +128,13 @@ model = TinyMLP()
 optimizer = optim.Adam(model.parameters(), lr=0.01)
 ```
 
+Code walkthrough:
+- `nn.Linear(2, 4)` means "take 2 input numbers and produce 4 learned combinations of them."
+- `torch.relu(...)` replaces negative values with `0`, which gives the network extra flexibility.
+- `nn.Linear(4, 1)` reduces the hidden representation down to one output value for binary classification.
+- `nn.BCELoss()` is binary cross-entropy loss, which penalizes confident wrong probabilities more heavily than small mistakes.
+- `optim.Adam(...)` is the training algorithm that updates the weights a little each step based on the gradients.
+
 ---
 
 ## Part 3: Train and Track Metrics
@@ -116,6 +142,13 @@ optimizer = optim.Adam(model.parameters(), lr=0.01)
 We record:
 - train/test loss
 - train/test accuracy
+
+The training loop repeats the same pattern:
+1. Make predictions on the training data.
+2. Measure how wrong those predictions are.
+3. Backpropagate to compute gradients.
+4. Update the weights.
+5. Measure loss and accuracy so we can see whether learning is improving over time.
 
 ```python
 def evaluate(model, X_t, y_t, criterion):
@@ -155,6 +188,14 @@ for epoch in range(num_epochs):
 
 print(f"Final MLP test accuracy: {history['test_acc'][-1]:.3f}")
 ```
+
+Code walkthrough:
+- `model.train()` turns on training behavior; `model.eval()` switches to evaluation behavior. This matters more in larger models with layers like dropout, but it is still good practice here.
+- `optimizer.zero_grad()` clears gradients from the previous step. Without this, PyTorch would add new gradients on top of old ones.
+- `loss.backward()` computes how each parameter contributed to the error.
+- `optimizer.step()` uses those gradients to update the weights.
+- `probs >= 0.5` converts predicted probabilities into class labels.
+- `history` stores the metrics from every epoch so the next section can plot the learning curves.
 
 ---
 
