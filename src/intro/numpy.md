@@ -1,283 +1,206 @@
 ---
 layout: post
-title:  3. Numpy
-parent: Intro
-nav_order: 4
-estimated_time: 2-3 hours
+title:  NumPy and Your First Graph
+parent: Foundations
+nav_order: 2
+estimated_time: 2-4 hours
 prereqs:
   - Basic Python syntax
 outcomes:
   - Build arrays and use vectorized operations
   - Use slicing/masks for data filtering
   - Prepare features for downstream ML lessons
-checkpoint: Module 2
 ---
 
-## Intro to Python & Numpy
-**Prerequisites:** basic Python variables, loops, and functions.
+# NumPy and Your First Graph
 
-**How this connects to later modules:** this lesson gives you the array operations used in feature engineering, evaluation, and optimization lessons.
+NumPy gives Python a simple way to store and transform columns of numbers—the basic shape of many machine-learning datasets.
 
-- **Python** - Popular language commonly used in data science for its extensive libraries and versatility
-- **Jupyter Notebook** - Interactive IDE (Integrated Development Environments) commonly used for EDA (exploratory data analysis) and data visualization. [Google Colab](https://colab.research.google.com) is basically the same thing.
+**Suggested week:** 1 · **Time:** 60–90 minutes · **Prerequisites:** basic Python variables and functions
 
+## What you will learn
 
-***Why Python?***
-- **Simplicity** - Python involves very less coding and simple syntax among other languages which can be used for developing AI/ML applications. Due to this feature, the testing can be easier and we can focus more on programming.
-- **Libraries** - There are many free, open-source libraries for AI application in Python. (NumPy, Scikit-learn, Keras, TensorFlow, etc.)
-- Easy integrations with other languages (C, C++, Java, etc.)
+- Create an array and inspect its shape.
+- Select values with indexing and boolean masks.
+- Make a graph and change the underlying data.
 
-## Numpy
-**Arrays** are an essential part in linear algebra and are extremely important when it comes to data science and machine learning. Unfortunately, Python does not have built-in support for arrays, and the memory consumption of built-in data types is not very good.
+## Core Path
 
-**NumPy** is a library in Python that supports large, multi-dimensional arrays as well as many mathematical functions to operate on arrays. We will go briefly into the properties of these arrays.
-  - A NumPy array is a collection of homogenous data-types that are stored in contiguous memory locations. This allows for array data to be densely packed resulting in less memory consumption in comparison to built-in Python data structures.
-  - NumPy is essential to many AI libraries, with many building off of or interfacing directly with NumPy
+Use [Google Colab](https://colab.research.google.com) for this lesson. A notebook keeps code, output, and explanation together, so you can experiment without configuring a local environment.
 
-To create an array, we can do the following:
-```python
-arr1 = np.array([1,2,3,4,5])
-```
-----
+### Create and inspect an array
 
-### Axes, Shape, and Data Type
-![Numpy Arrays & Axes](../res/numpy_arr_axis.png)
-1. **Axis:**
-  - Each dimension is referred to as an "axis."
-
-  - Many NumPy functions allow operations to be performed along a specified axis. Common operations include ```std, mean, var, minimum, maximum,``` etc. The axis parameter in these operations specify the direction along which an operation is applied.
-
-2. **Shape:**
-   - The "shape" of an ndarray refers to the size of the array. For example, a 1-dimensional array might have a shape like ```(5,)```, indicating it has 5 elements along a single axis. A 2-dimensional array might have a shape like ```(3, 4)```, indicating it has 3 rows and 4 columns, similar to how it is said in linear algebra.
-
-3. **Data Types:**
-   - NumPy provides a set of data types that are more efficient than those built in Python. Many NumPy operations are implemented using C, which is a lower level language in comparison to Python. This allows for operations to be done quicker and more efficiently in NumPy than with the built-in Python data types. This extra speed can make a big difference. Some data types include:
-    - int8, int16, int32, int64 (integers with declared bit precision)
-    - uint8, uint16, uint32, uint64 (unsigned integers)
-    - float16, float32, float64 (floating-point numbers)
-    - complex64, complex128 (complex numbers)
-    - bool (true or false values)
-    - etc.
-  - If no data type is specified, one is automatically assigned
+An array stores values in a regular structure. Unlike a Python list, it supports concise numerical operations across every value.
 
 ```python
-# Example: Declare array "arr" to be a 2x5 array of data type int32
-arr = np.array([[1,2,3,4,5],
-                [6,7,8.0,9,10]],
-                dtype='int32')
-result = np.sum(arr,axis=1)
-result
+import numpy as np
+
+scores = np.array([52, 57, 63, 68, 74, 79])
+
+print(scores.shape)  # six values
+print(scores.mean())
+print(scores * 1.05)  # apply the operation to every value
 ```
 
-We can also make 3D arrays. Beyond this, multidimensional arrays can really have any number of dimensions; although, we will only directly deal with arrays up to the 3rd dimension.
+For a two-dimensional array, `shape` reports rows followed by columns:
 
 ```python
-# Create a 3D NumPy array
-arr_3d = np.array([
-  [[0, 1, 2], [3, 4, 5], [6, 7, 8]], # Matrix 1
-  [[10, 11, 12], [13, 14, 15], [16, 17, 18]], # Matrix 2
-  [[20, 21, 22], [23, 24, 25], [26, 27, 28]]  # Matrix 3
-  ])
-print(arr_3d)
+data = np.array([
+    [1, 52],
+    [2, 57],
+    [3, 63],
+])
+
+print(data.shape)  # (3, 2)
 ```
 
-----
+![Diagram of NumPy array dimensions and axes](../res/numpy_arr_axis.png)
 
-### Slicing and Indexing
-We can access elements in the matrix using **indexing**.
-**Slicing** allows the user to access portions of the original array. We will go over common methods for both techniques.
+### Select values
 
-**Integer Indexing**
-
-We can access particular elements in an array using integers, integer arrays, or integer lists.
+Python indexing starts at zero. A slice selects a range; a boolean mask keeps values that satisfy a condition.
 
 ```python
-arr_1D = np.array([5,6,7,8,9])
-print(arr_1D[0]) # Indexing starts at 0
+print(scores[0])       # first value
+print(scores[1:4])     # positions 1, 2, and 3
+print(scores[scores >= 65])
 ```
+
+The expression `scores >= 65` creates `True` or `False` for every value. Passing that mask back into the array returns only matching values.
+
+### Week 1 activity: your first graph
+
+Use two arrays to make a visible result:
 
 ```python
-arr_2d = np.array([[5,6,7],
-                   [8,9,0],
-                   [3,4,7]])
-print(arr_2d[0,:]) # Prints first row
+import numpy as np
+import matplotlib.pyplot as plt
+
+hours = np.array([1, 2, 3, 4, 5, 6])
+scores = np.array([52, 57, 63, 68, 74, 79])
+
+plt.plot(hours, scores, marker="o")
+plt.xlabel("Hours practiced")
+plt.ylabel("Score")
+plt.title("A first look at a small dataset")
+plt.show()
 ```
+
+Change one value, run the cell again, and write:
+
+1. Two things you notice.
+2. One question the graph cannot answer.
+
+A graph can reveal a pattern, but it does not prove that one variable caused the other.
+
+For the guided version, [open the Week 1 notebook in Colab](https://colab.research.google.com/github/astarryknight/ai-ml/blob/main/notebooks/week-01-array-explorer.ipynb) or [download it](../../notebooks/week-01-array-explorer.ipynb).
+
+## Try it
+
+Write code that:
+
+1. Creates an array containing the numbers 1 through 10.
+2. Reshapes it to `(2, 5)` and prints the shape.
+3. Multiplies every value by 5.
+4. Prints the values greater than 25.
+5. Prints the index of the largest value.
+
+<details>
+<summary>One possible answer</summary>
 
 ```python
-# Prints second row
-print(arr_2d[1,:])
+a = np.arange(1, 11).reshape(2, 5)
+b = a * 5
+
+print(a.shape)
+print(b[b > 25])
+print(np.argmax(b))
 ```
+
+</details>
+
+## Quick self-check
+
+1. What does an array shape of `(4, 3)` mean?
+2. What does `values[values < 0]` return?
+3. Why is changing one value and rerunning the graph useful?
+
+Use [Knowledge Checks](../assessments/checkpoints.html) for answer guidance.
+
+## Optional Depth
+
+You do not need the rest of this page to finish Week 1. Return when later lessons require a particular operation.
+
+### Axes and aggregation
+
+For a 2D array, `axis=0` combines values down the rows and returns one result per column. `axis=1` combines across the columns and returns one result per row.
 
 ```python
-print(arr_2d[:,0])  # Prints first column
+data = np.array([
+    [2, 5, 7],
+    [3, 6, 8],
+])
+
+print(data.mean(axis=0))
+print(data.sum(axis=1))
 ```
+
+Useful inspection and aggregation methods include `ndim`, `shape`, `dtype`, `size`, `min`, `max`, `mean`, `sum`, `argmin`, and `argmax`.
+
+### Data types and higher dimensions
+
+NumPy chooses a data type for an array, or you can request one explicitly:
 
 ```python
-print(arr_2d[0:2,1:3]) # Print specified array portion
+measurements = np.array([1, 2, 3], dtype="float32")
+print(measurements.dtype)
 ```
 
-**Boolean Indexing**
-
-By using an array of boolean values, we can select certain values in an array. This allows us to use things like masks or filters on the data, which we will be covering more later.
+Arrays can have three or more dimensions, but the core lessons mostly use one-dimensional columns and two-dimensional tables.
 
 ```python
-arr_1D = np.array([5,6,7,8,9])
-mask = np.array([False, True, False, True, False])
-arr_1D[mask]
+images = np.zeros((10, 28, 28))
+print(images.shape)  # 10 images, each 28 by 28 pixels
 ```
 
-----
+### Vectorized arithmetic
 
-### Useful Array Functions
-***ndim*** - check the number of dimensions in an array
-```python
-arr_3d.ndim
-```
- 
-***shape*** - check the shape of the matrix 
-```python
-arr_3d.shape
-```
- 
-***dtype*** - checks the data type of an array
-```python
-arr_3d.dtype
-```
- 
-***size*** - returns the number of elements in an array
-```python
-arr_3d.size
-```
- 
-***np.sort()*** - returns a sorted copy of an array along a specified axis
-```python
-arr = np.array([4,6,8,0,7,1,13,93])
-sorted_arr = np.sort(arr, axis=0)
-print(sorted_arr)
-```
- 
-***np.zeros() and np.ones()*** - Create arrays with only zeros or ones of specified size
-```python
-zero_arr = np.zeros((6,3))
-print(zero_arr)
-```
- 
-***np.linspace()*** - Create an array with a specified number of evenly spaced values.
-```python
-linspace_arr = np.linspace(0, 1, 5)
-print(linspace_arr)
-```
-
-***np.reshape()*** - reshapes a given array (make sure that the reshape is valid)
-```python
-arr_2d = np.array([[1,2,3],
-                   [4,5,6]])
-reshaped_arr_2d = arr_2d.reshape(3,2)
-print(reshaped_arr_2d)
-```
-
-***np.min(), np.max(), np.mean(), np.sum()*** - gives the min, max, mean, and sum along a particular axis
-```python
-arr = np.array([[1,2,3],
-                [4,5,6],
-                [7,8,9]])
-arr_mean_columns = np.mean(arr, axis=0)
-print(arr_mean_columns)
-```
-
-***np.argmax() and np.argmin()*** - Find the indices of the maximum and minimum values in an array.
-```python
-arr_2d = np.array([[1,2,3],
-                   [4,5,6]])
-min_arg = np.argmin(arr_2d)
-print(min_arg)
-```
-
-***np.random.rand() and np.random.randn()*** - Returns an array of random numbers or normally distribusted random numbers, respectively, of a specified size
-```python
-arr = np.random.rand(3,4)
-```
- 
-***np.random.randint()*** - Returns an array of random integers of specified range and size
-```python
-arr = np.random.randint(low=1, high=8, size=(2,4)) # Range: lower=1(inclusive), upper=8(exclusive)
-```
-
-***np.linalg.inv()*** - Compute the inverse of a matrix.
-
-***np.linalg.det()*** - Compute the determinant of a matrix.
-
-----
-
-### Arithmetic Operations
-NumPy is capable of performing numerous arithmetic operations on matrices ```+,-,*,/```. These arithmetic operators are done by element, referred to as element-wise operations.
-
-**Element-wise Operations** - (vectorized operations) operations that are performed individually on each element of an array. The operation is applied to each element of the array independently, resulting in a new array with the same shape and size as the original.
+Operations such as `+`, `-`, `*`, and `/` usually apply element by element:
 
 ```python
-arr1 = np.array([[1,2],
-                 [3,4]])
-arr2 = np.array([[5,6],
-                 [7,8]])
+a = np.array([1, 2, 3])
+b = np.array([10, 20, 30])
 
-#elementwise: 
-arr1 + arr2 #addition
-arr1 - arr2 #subtraction
-arr1 * arr2 #multiplication
-arr1 / arr2 #division
+print(a + b)
+print(a * 2)
 ```
-
-----
 
 ### Broadcasting
-What if you want to use operations on mismatched arrays? In some cases, NumPy will **"broadcast"** an array to perform these operations. An array can be stretched in order to make it compatible for element-wise operations
 
-![Broadcasting](../res/broadcasting.png)
-
-----
-
-### Masks
-Masks and filters allow us to make conditions for selecting values from a matrix using boolean indexing. Here are some examples.
+Broadcasting lets NumPy combine arrays with compatible shapes without manually copying values. Here, one three-value row is subtracted from every row in the table:
 
 ```python
-# Print numbers in a matrix greater than 5
-arr = np.array([1,2,3,4,5,6,7,8])
-mask = arr > 5
-print(arr[mask])
+data = np.array([
+    [2, 5, 7],
+    [3, 6, 8],
+])
+
+column_means = data.mean(axis=0)
+centered = data - column_means
 ```
+
+![Illustration of NumPy broadcasting](../res/broadcasting.png)
+
+### Useful constructors and reshaping
 
 ```python
-# Print all even numbers in the array
-arr = np.array([[1,2,3,4],
-                [5,6,7,8],
-                [9,10,11,12]])
-
-mask = (arr % 2) == 0
-arr[mask]
+zeros = np.zeros((2, 3))
+ones = np.ones((2, 3))
+evenly_spaced = np.linspace(0, 1, 5)
+random_integers = np.random.randint(0, 21, size=10)
+reshaped = np.arange(12).reshape(3, 4)
 ```
 
---- 
+## Next step
 
-### Exercises:
-1. Import **numpy**
-2. Create a numpy array "a" of the numbers 1-10
-3. Reshape this array to be size (2,5), and print the new shape
-4. Transpose this array, and print out the new shape
-5. Multiply this array by 5, and save to array "b"
-6. Print the sum of the array "b"
-7. Print the index of the maximum value of the array "b"
-8. Generate an array "r" of random integers [0,20] with shape (1,10)
-9. Print values > 10 in "r"
-10. Print all the even numbers in "r"
-
-----
-
-### Practice Blocks (For Upcoming Lessons)
-**Practice A: Evaluation prep**  
-Create `y_true` and `y_pred` arrays and compute MAE and RMSE with NumPy operations.
-
-**Practice B: Feature engineering prep**  
-Create a 2D array with some missing placeholders (for example `-1`) and use masks to replace them with column means.
-
-**Practice C: Optimization prep**  
-Given `x`, `y`, `w`, and `b`, compute predictions `y_hat = w*x + b` and mean squared error in one vectorized expression.
+Continue to [Intro to Machine Learning](../theory/intro_ml.html) to see how arrays become features, targets, and model inputs.

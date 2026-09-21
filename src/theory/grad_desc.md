@@ -1,8 +1,7 @@
 ---
-layout: post
-title:  2. Optimization & Gradient Descent
-parent: Theory
-nav_order: 3
+title:  Optimization & Gradient Descent
+parent: Core Concepts
+nav_order: 2
 layout: katex
 estimated_time: 90-120 minutes
 prereqs:
@@ -12,11 +11,25 @@ outcomes:
   - Explain how gradient descent updates parameters
   - Interpret learning rate behavior
   - Connect error curves to convergence
-checkpoint: Module 4
 ---
 
-## Linear Regression
-The most basic machine learning model is linear regression. This, like any other regression model, predicts for a continuous value. Since this is the most simple learning model, let's try to build it!
+# Optimization & Gradient Descent
+
+Optimization is how a model turns “that prediction was wrong” into a small, useful update.
+
+**Suggested week:** 2 · **Time:** 60–90 minutes · **Prerequisites:** Intro to Machine Learning and NumPy basics
+
+## What you will learn
+
+- Explain how gradient descent updates model parameters.
+- Predict what happens when a learning rate is too large or too small.
+- Read a loss curve as evidence about training.
+
+## Core Path
+
+### Linear regression
+
+Linear regression predicts a continuous value. It finds a line that makes useful predictions from one or more features.
 
 But first, what is linear regression?
 
@@ -24,9 +37,9 @@ But first, what is linear regression?
 
 Basically, linear regression is a way to predict a single target variable by using the linear relationship between that target variable and the rest of the features in the dataset. The goal of linear regression is to draw a line closest to all data points.
 
-There is actually a really easy way to calculate the regression line, or line of best-fit, numerically, but let's try to use more of an machine-learning approach to linear regression. Let's look back at our 3-Step Framework. One thing that you may have noticed is that we did not account for some way to change our model in response to errors in our predictions. We make changes to our model to reduce error in a process called **optimization**. One way we can optimize our models is through *gradient descent*.
+There are direct formulas for a best-fit line, but an iterative approach exposes a pattern used across machine learning. We reduce prediction error through [optimization](../glossary.html#optimization). One common method is [gradient descent](../glossary.html#gradient-descent).
 
-## Optimization: Gradient Descent
+### Optimization: Gradient descent {#optimization-gradient-descent}
 ![Gradient Descent Figure](../res/grad_desc_vis.png)
 
 **Gradient** - a vector that points in the direction of the steepest increase of a function at a specific point
@@ -73,7 +86,7 @@ To optimize our model we will use the *square trick*, which implements gradient 
 
 Our line is refered to as a hyperplane, which is a n-1 dimensional plane that spans the entire space. In regression, we fit this hyperplane to be closest to all the points.
 
-Our square trick optimizes the least squares cost function. For a given set of parameters  **w**, this cost function computes the total squared error between the associated hyperplane and the data (as illustrated pictorially in the picture above), giving a measure of how well the model fits the data. We reduce the square error by slightly adjusting the line by a certain amount. Alternatively, we could use the absolute value of the error.
+Our square trick optimizes the least-squares cost function. For a given set of parameters **w**, this function computes the total squared [error](../glossary.html#loss-error) between the line and the data. We reduce that error by adjusting the line a small amount.
 
 ----
 
@@ -107,8 +120,15 @@ def square_trick(base_dono, funds_per_dono, num_donos, funds, learning_rate):
     return funds_per_dono, base_dono
 ```
 
-We are essentially adjusting our line incrementally. In a specific rate called the **learning rate**.
-- **Learning Rate** - A very small number we pick *before* training our model. This number makes sure we are only taking small steps with each adjustment.
+We are adjusting the line incrementally. The [learning rate](../glossary.html#learning-rate) controls the size of each update.
+
+## Try it
+
+Before reading the full implementation, predict what will happen with a very small learning rate and a very large one. Then use the [Optimization Playground](../minis/opt.html) to compare their loss curves.
+
+## Optional Depth
+
+The remainder of the implementation shows the update mechanics in detail. It is useful when you want to understand or debug training code, but it is not required before continuing to evaluation.
 
 **Note: Gradient Descent vs Stochastic Gradient Descent (SGD)**
 - **(Batch) Gradient Descent** uses the *entire dataset* to compute each update step.  
@@ -204,7 +224,7 @@ linear_regression(features, labels, learning_rate = 0.01, epochs = 2000) # We ca
 
 Currently, this only works with simple linear regression. If we want to do multiple linear regression, all we have to do is apply gradient descent to higher dimensions.
 
-Now that you know the basics of machine learning and optimization, check out the [Spotify Recommendation Mini](https://astarryknight.github.io/ai-ml/src/minis/spotify.html)
+The code above is intentionally written out for learning. In most projects, a library performs these updates while you inspect its results and choose sensible settings.
 
 ----
 
@@ -214,9 +234,13 @@ Now that you know the basics of machine learning and optimization, check out the
 - **Inconsistent runs:** set random seeds for reproducibility.
 - **Poor fit despite low training error:** inspect data quality and feature scaling.
 
-## Quick Checkpoint Prompts
+## Quick self-check
 1. What role does the learning rate play in optimization?
 2. Why can random initialization change the path of training?
 3. What does a flattening RMSE curve suggest?
 
-See [Checkpoints](../assessments/checkpoints.html) for answer guidance.
+See [Knowledge Checks](../assessments/checkpoints.html) for answer guidance.
+
+## Next step
+
+Continue to [Evaluation Basics](./evaluation.html) to learn how to tell whether an improvement holds up on new data.

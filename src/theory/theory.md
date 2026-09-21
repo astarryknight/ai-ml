@@ -1,25 +1,33 @@
 ---
 layout: post
-title:  Theory
-nav_order: 5
-estimated_time: 20-30 hours
+title:  Core Concepts
+nav_order: 3
+has_children: true
+has_toc: false
+estimated_time: 10-16 hours
 prereqs:
   - Intro lessons
 outcomes:
-  - Understand core ML concepts and mathematical intuition
-  - Apply theory directly in minis
+  - Understand the core ML workflow and terminology
+  - Connect theory directly to the weekly projects
+  - Use optional math when it helps explain behavior
 ---
 
-## Theory
-Here, you will learn the conceptual and mathematical framework that powers machine learning and artificial intelligence.
+# Core Concepts
+
+Use these pages to understand the ideas behind machine-learning projects. Read them in sequence or jump directly to the topic you need. Deeper math is optional.
 
 Recommended sequence:
-1. Intro to Machine Learning
-2. Optimization & Gradient Descent
-3. Evaluation Basics
-4. Feature Engineering Basics
-5. Artificial Neural Networks
-6. Natural Language Processing
-7. Reinforcement Learning
+1. [Intro to Machine Learning](./intro_ml.html) - workflow, problem types, and model families
+2. [Optimization & Gradient Descent](./grad_desc.html) - loss and parameter updates
+3. [Evaluation Basics](./evaluation.html) - metrics, splits, and leakage
+4. [Feature Engineering Basics](./feature_engineering.html) - preprocessing and generalization
+5. [Artificial Neural Networks](./ann.html) - layers, activations, and training intuition
+6. [Reinforcement Learning](./rl.html) - extension topic for Week 7
 
-Use the [Learning Path](../pathway.html) for async pacing.
+## Optional extensions
+
+- [Natural Language Processing](./nlp.html)
+- [Deep Reads](../deep_reads/deep_reads.html)
+
+Use the [weekly guide on the homepage](../../index.html#catch-up-by-week) when you need to match a lesson to an in-person session. Open [Practice](../minis/minis.html) when you are ready to apply an idea.

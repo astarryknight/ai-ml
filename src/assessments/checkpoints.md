@@ -1,105 +1,114 @@
 ---
 layout: post
-title:  Checkpoints
-parent: Learning Path
-nav_order: 2
-estimated_time: 1-2 hours total
+title:  Knowledge Checks
+parent: Practice
+nav_order: 1
+estimated_time: 30-45 minutes total
 outcomes:
-  - Validate understanding at each module boundary
+  - Validate understanding at each core boundary
   - Catch confusion before moving forward
+  - Review the main ideas at your own pace
 ---
 
-## Module Checkpoints (With Answer Keys)
+# Knowledge Checks
 
-These are short async self-checks. Try to answer before opening the answer key.
+Use these short questions to find gaps before moving on. They are practice, not graded assignments.
 
-----
+## How to use these checks
 
-### Module 1 Checkpoint: AI/ML Framing
-1. In one sentence each, define AI and ML.
-2. Give one example where symbolic approaches are useful.
-3. Give one example where data-driven ML is useful.
+These are short self-checks, not graded assignments. Try to answer each question before opening the answer key. You can use the checks after a lesson or return to them whenever you need a refresher.
 
-**Answer key:**
-- AI is the broader field of building systems that perform tasks associated with intelligence.
+| Check | Topic |
+| --- | --- |
+| 1 | Foundations and NumPy |
+| 2 | Regression and optimization |
+| 3 | Classification and metrics |
+| 4 | Data workflow and generalization |
+| 5 | Unsupervised learning and recommendations |
+
+### Check 1: Foundations and NumPy
+
+1. Define AI and ML in one sentence each.
+2. Give one example where explicit rules are useful.
+3. What does the shape `(2, 3)` tell you about a NumPy array?
+
+<details>
+<summary>Answer key</summary>
+
+- AI is the broad field of building systems that perform tasks associated with intelligent behavior.
 - ML is a subset of AI where systems learn patterns from data.
-- Symbolic example: rule-based tax form validation.
-- ML example: email spam detection from historical labels.
+- A `(2, 3)` array has 2 rows and 3 columns.
 
-### Module 2 Checkpoint: NumPy Workflow
-1. What is broadcasting?
-2. Write a boolean mask that selects values greater than 10 in array `a`.
-3. Why are vectorized operations preferred over Python loops for arrays?
+</details>
 
-**Answer key:**
-- Broadcasting expands compatible dimensions for element-wise operations.
-- `a[a > 10]`
-- Vectorized operations are faster and simpler because they use optimized low-level routines.
+### Check 2: Regression and optimization
 
-### Module 3 Checkpoint: Supervised Workflow
-1. What is data leakage?
-2. Why do we split train/validation/test?
-3. Name one regression metric and one classification metric.
+1. What is the difference between a feature and a target?
+2. What does a loss value measure?
+3. What does the learning rate control in gradient descent?
 
-**Answer key:**
-- Leakage is accidentally letting target/future information enter training features.
-- Split enables training, tuning, and unbiased final evaluation.
-- Regression: RMSE/MAE. Classification: accuracy/precision/recall/F1.
+<details>
+<summary>Answer key</summary>
 
-### Module 4 Checkpoint: Optimization
-1. What does learning rate control?
-2. What happens when learning rate is too high?
-3. What does a flattening loss curve usually indicate?
+- A feature is an input used for prediction. The target is the value the model tries to predict.
+- Loss measures how far predictions are from the desired targets according to a chosen function.
+- The learning rate controls the size of each parameter update.
 
-**Answer key:**
-- Step size of each gradient update.
-- Overshooting/divergence or unstable training.
-- Convergence or near-convergence to a local/global minimum.
+</details>
 
-### Module 5 Checkpoint: Unsupervised Learning
+### Check 3: Classification and metrics
+
+1. What is the difference between regression and classification?
+2. Identify one false positive and one false negative in a confusion matrix.
+3. When might recall matter more than accuracy?
+
+<details>
+<summary>Answer key</summary>
+
+- Regression predicts a numeric value. Classification predicts a category.
+- A false positive predicts the positive class when the truth is negative. A false negative misses a positive example.
+- Recall matters when missing a positive case is especially costly, such as a safety or medical screening task.
+
+</details>
+
+### Check 4: Data workflow and generalization
+
+1. Why do we split train, validation, and test data?
+2. What is data leakage?
+3. Give one example of a feature-engineering step.
+
+<details>
+<summary>Answer key</summary>
+
+- The split separates fitting, tuning, and final evaluation so the final score better reflects performance on new data.
+- Leakage occurs when information that would not be available at prediction time enters the training features or process.
+- Examples include scaling numeric features, encoding categories, or filling missing values inside a reproducible pipeline.
+
+</details>
+
+### Check 5: Unsupervised learning and recommendations
+
 1. What is clustering used for?
 2. Why can interpreting clusters require human judgment?
-3. What does dimensionality reduction preserve?
+3. Why should features often be scaled before K-means?
 
-**Answer key:**
-- Grouping similar data points without labels.
-- Clusters are unlabeled by default and need domain context.
-- As much important structure/information as possible in fewer dimensions.
+<details>
+<summary>Answer key</summary>
 
-### Module 6 Checkpoint: Neural Networks
-1. What is a perceptron?
-2. Why are nonlinear activations important?
-3. Name one overfitting mitigation strategy.
+- Clustering groups similar data points without requiring labels.
+- A cluster is a similarity group, not automatically a meaningful real-world category.
+- K-means uses distances, so features with larger numeric scales can dominate the grouping.
 
-**Answer key:**
-- Weighted sum + bias passed through an activation.
-- They allow modeling non-linear boundaries.
-- Regularization, dropout, or early stopping.
+</details>
 
-### Module 7 Checkpoint: NLP
-1. Difference between token and type?
-2. Why remove stopwords in some tasks?
-3. What is lemmatization?
+## Additional practice
 
-**Answer key:**
-- Token is an occurrence; type is a unique token value.
-- To reduce noise and focus on informative content words.
-- Mapping word forms to root/base form.
+### Neural networks
 
-### Module 8 Checkpoint: RL
-1. Define state, action, reward.
-2. What is exploration vs. exploitation?
-3. Why use a discount factor?
+1. What does a layer do?
+2. Why are nonlinear activation functions useful?
+3. What is the validation set used for?
 
-**Answer key:**
-- State: current environment signal; action: agent decision; reward: feedback signal.
-- Exploration tries new actions; exploitation picks known high-value actions.
-- It balances immediate vs future rewards and stabilizes long-horizon credit assignment.
+### Planning your own project
 
-### Module 9 Checkpoint: Consolidation
-1. List two minis you completed and why you chose them.
-2. For one mini, describe one iteration you made after evaluating output.
-3. Name one limitation in your final result and one next improvement.
-
-**Answer key guidance:**
-- Free response; quality should show clear reasoning, evaluation evidence, and realistic next steps.
+Draw the flow from the user problem to data or retrieval, model or agent, evaluation, and final user-facing output. Use [Build a Project](../capstone.html) to turn the sketch into a one-page proposal.

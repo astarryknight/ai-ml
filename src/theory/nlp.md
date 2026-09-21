@@ -1,7 +1,7 @@
 ---
 layout: post
-title:  4. Natural Language Processing
-parent: Theory
+title:  Natural Language Processing
+parent: Core Concepts
 nav_order: 6
 estimated_time: 90-120 minutes
 prereqs:
@@ -11,49 +11,39 @@ outcomes:
   - Explain core text preprocessing concepts
   - Build vocabulary-level intuition for NLP pipelines
   - Connect preprocessing decisions to downstream models
-checkpoint: Module 7
 ---
 
-## Natural Language Processing
+# Natural Language Processing
 
-Natural Language Processing (NLP) is currently the "hot" market of AI as it is incorporated in applications like:
+Natural language processing (NLP) gives computers ways to represent and work with human language.
 
-*   Text Generators
-*   Virtual Assistants
-*   Speech Recognition
-*   Chat Bots
+**Suggested week:** 7, optional path · **Time:** 60–90 minutes · **Prerequisites:** Intro to Machine Learning
 
-The fundamental definition of Natural Language Processing:
-> A subfield of artificial intelligence and computational linguistics that focuses on human-computer interaction.
+## What you will learn
 
-In other words,
-> Making a Computer "think" and "act" like a Human
+- Explain corpora, tokens, vocabularies, and n-grams.
+- Show how raw text becomes model features.
+- Recognize preprocessing choices that can change meaning.
 
-NLP involves a computer understanding text for the sake of solving real-world tasks.
+NLP supports search, classification, transcription, translation, assistants, and text generation. A system does not need to think like a human to perform a useful language task.
 
-----
+## Core Path
 
-## Minimum Viable Understanding
-Before moving on, make sure you understand:
+Prioritize these ideas on a first pass:
+
 1. Tokenization and vocabulary basics.
 2. Why normalization (lemmatization/stopword handling) matters.
 3. How text becomes features for ML models.
 
-----
-## Basics of NLP
+### Corpora and tokens
 
-### Corpora and Tokens
-Some terms to know
+A [corpus](../glossary.html#corpus-token) is a collection of text and related metadata used for an NLP task. One text and its metadata form an example.
 
-**Corpus** - a text dataset that usually contains raw text and any metadata associated with the text; our dataset for NLP tasks
+A [token](../glossary.html#corpus-token) is one unit produced when text is split for processing. A simple English tokenizer might treat words and punctuation as tokens, but real tokenization varies across languages and model families.
 
-**Instance** - text accompanied by any other metadata (basically the same definition we have been using)
-
-**Token** - contiguous units in a language that typically corresponds to words and numeric sequences separated by white-space characters or punctuation.
-
-**Tokenization** - splitting a string of text (a sentence) into tokens
+**Tokenization** is the process of creating those units.
 - "the quick brown fox jumps over the lazy dog" has 9 tokens.
-- Note that tokenization does not work well for many languages, but we can go around this by representing the text as a stream of bytes, but we will keep things simple for now.
+- A different tokenizer may split the same sentence differently.
 
 ![NLP explanation figure](../res/nlp1.png)
 
@@ -172,7 +162,7 @@ Example: John (person) was born in the United States (GPE - Geopolitical Entity)
 
 ----
 
-### Structure of Sentencees
+### Structure of sentences
 
 **Parsing** - the task of identifying the relationship between phrases
 
@@ -194,10 +184,25 @@ Word senses can be deduced from the context of the word, through semi-supervised
 
 ----
 
-### Optional Depth (Second Pass)
+## Try it
+
+Take the sentence “The students were building useful models.” Write one possible token list, identify one bigram, and decide whether reducing “students” and “building” to root forms would help your imagined task.
+
+## Quick self-check
+
+1. What is the difference between a corpus and a token?
+2. Why can removing every stop word damage meaning?
+3. How could two tokenizers create different model inputs from the same sentence?
+
+Use [Knowledge Checks](../assessments/checkpoints.html) for answer guidance.
+
+## Optional Depth
+
 If you want extra depth after finishing the core path:
 - More robust tokenization for multilingual text
 - Contextual embeddings and transformer tokenization
 - Sequence models and modern LLM pipelines
 
-Now that we're done with the baiscs of NLP, let's work on an example: [NLP with Disaster Tweets](https://astarryknight.github.io/ai-ml/src/minis/nlp.html).
+## Next step
+
+Apply the ideas in [NLP with Disaster Tweets](../minis/nlp.html).

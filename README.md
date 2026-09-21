@@ -1,48 +1,55 @@
 # AI-ML Curriculum
 
-Welcome to the **AI-ML World Class Curriculum**! This project is a comprehensive, modular, and open-source curriculum designed to teach artificial intelligence and machine learning concepts from foundational theory to hands-on projects. It is suitable for self-learners, educators, and anyone interested in mastering AI/ML.
+This repository contains a beginner-friendly, project-based 10-week curriculum for learning machine learning with Python, NumPy, scikit-learn, and Google Colab. Students build small artifacts each week and finish with a capstone that can become a portfolio or resume project.
 
 ---
 
-## 📚 Curriculum Structure
+## Curriculum Structure
 
 The curriculum is organized into the following main sections:
 
-### 1. **Introductory Lessons**
-- **What is AI?** (`src/intro/whatisai.md`)
-- **Introduction to AI/ML** (`src/intro/intro.md`)
-- **NumPy Basics** (`src/intro/numpy.md`)
-- **Local Setup** (`src/intro/local.md`)
+### 1. **Home**
+- **10-week catch-up guide and learner routes** (`index.md`)
 
-### 2. **Theory**
+### 2. **Foundations**
+- **Foundations** (`src/intro/intro.md`)
+- **What is AI/ML?** (`src/intro/whatisai.md`)
+- **NumPy and your first graph** (`src/intro/numpy.md`)
+- **Optional local setup** (`src/intro/local.md`)
+
+### 3. **Core Concepts**
 - Core theoretical concepts in AI/ML (see `src/theory/`)
 
-### 3. **Minis (Short Projects)**
+### 4. **Practice**
+- **Knowledge checks** (`src/assessments/checkpoints.md`)
 - **Artificial Neural Networks** (`src/minis/ann.md`)
 - **Natural Language Processing** (`src/minis/nlp.md`)
 - **Reinforcement Learning** (`src/minis/rl.md`)
 - **Spotify Data Analysis** (`src/minis/spotify.md`)
 
-### 4. **Deep Reads**
-- In-depth explorations of advanced topics (`src/deep_reads/`)
+### 5. **Build a Project**
+- **Independent project guide** (`src/capstone.md`)
 
-### 5. **Resources**
-- Curated list of external resources (`src/resources.md`)
+### 6. **Resources**
+- **ML glossary** (`src/glossary.md`)
+- **Code snippets** (`src/code.md`)
+- **Deep Reads** (`src/deep_reads/`)
+- **Curated external resources** (`src/resources.md`)
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please create a pull request with any relevant contributions or fixes to the site.
 
 ---
 
-## 📄 License
+## License
 
 This curriculum is open-source and available under the MIT License. See `LICENSE` for details.
 
 ---
 
-## 🌐 About
+## About
 
 Created and maintained by [astarryknight](https://github.com/astarryknight).

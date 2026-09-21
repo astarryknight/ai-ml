@@ -1,7 +1,6 @@
 ---
-layout: post
-title:  3. Artificial Neural Networks
-parent: Theory
+title:  Artificial Neural Networks
+parent: Core Concepts
 nav_order: 5
 layout: katex
 estimated_time: 2-3 hours
@@ -12,37 +11,31 @@ outcomes:
   - Explain perceptrons and layered networks
   - Describe backpropagation at a conceptual level
   - Identify basic overfitting risks
-checkpoint: Module 6
 ---
 
-## Artificial Neural Networks
+# Artificial Neural Networks
 
 (based on [this textbook](https://www.google.com/books/edition/Grokking_Machine_Learning/fNhOEAAAQBAJ?hl=en&gbpv=0))
 
-Neural Networks are one of the most popular machine learning models. They are meant to **mimic how the brain operates**, and can end up being very complex. The field of neural networks is referred to as *Deep Learning*.
+[Neural networks](../glossary.html#neural-network) combine simple mathematical units into layers that can represent nonlinear patterns. They were historically inspired by biological neurons, but they are mathematical models rather than simulations of a brain.
 
-Some important applications of Neural Networks are:
+**Suggested week:** 6 · **Time:** 90–120 minutes · **Prerequisites:** Intro to Machine Learning and Optimization
 
+## What you will learn
 
-*   Image Recognition
-*   NLP
-*   Medicine
-*   Self-driving cars
+- Explain how inputs, weights, a bias, and an activation produce an output.
+- Describe how layers can form nonlinear decision boundaries.
+- Explain training and backpropagation at a conceptual level.
 
-and more!
+Neural networks are used in image recognition, language processing, medicine, robotics, and many other fields. Deep learning refers to using neural networks with multiple learned layers.
 
-Terminology:
-* **Perceptron** - An algorithm which uses a combination of features and weights to make a prediction
-* **Discrete** - outputs 0 or 1
-* **Continuous** - outputs any number in the interval (0,1)
+## Core Path
 
-----
+Prioritize these ideas on a first pass:
 
-## Minimum Viable Understanding (Read This First)
-If you are learning asynchronously, prioritize these ideas first:
 1. A perceptron is a weighted sum + bias + activation.
 2. Stacking perceptrons allows nonlinear decision boundaries.
-3. Training updates weights to reduce loss (backprop + gradient descent).
+3. Training updates weights to reduce loss with backpropagation and gradient descent.
 4. Overfitting is common and must be managed.
 
 After these are clear, continue through the full examples.
@@ -82,7 +75,7 @@ The reason that we can't really model this happiness with 1 line is because happ
 
 ### Combining Perceptrons
 
-Neural Networks are built by taking the **outputs** of 2 perceptrons as **inputs** to a third perceptron. These perceptrons are discrete (only 0 or 1). Using our functions, we can define family and career happiness classifiers:
+Neural networks can take the outputs of two units as inputs to another unit. In this simplified example, the units output either 0 or 1. Using our functions, we can define family and career happiness classifiers:
 
 
 **Career happiness classifier**
@@ -113,7 +106,7 @@ Neural Networks are built by taking the **outputs** of 2 perceptrons as **inputs
 
 ![Classifiers Combined](../res/alien6.png)
 
-Neural Networks are aptly named since their basic unit, the **perceptron**, vaguely resembles a neuron. A neuron has 3 parts: the soma, the dendrites, and the axon (see image above). The neuron receives signals coming from other neurons through the dendrites, processes them in the soma, and sends a signal through the axon to be received by other neurons. Perceptrons are very similar: it receives numbers as inputs, applies a mathematical operation to them (normally involving an activation function, which converts inputs to outputs), and outputs a new number.
+The name comes from a loose analogy with connected biological neurons. A perceptron receives numbers, combines them using weights and a bias, applies an [activation function](../glossary.html#activation-function), and produces a new number.
 
 ### Graphical Representation of Perceptrons
 ![Perceptron](../res/alien8.png)
@@ -174,7 +167,7 @@ Here is the error function we can use to see how our neural network is performin
 ![Loss Function](../res/alien16.png)
 
 ### Backpropagation
-In the past, we used [gradient descent](https://astarryknight.github.io/ai-ml/src/theory/grad_desc.html) to train our models. This is the same for neural networks, and we will be using a training algorithm known as *backpropagation*. The structure for backpropagation is:
+We use [gradient descent](./grad_desc.html) to train our models. A neural network uses [backpropagation](../glossary.html#backpropagation) to determine how each weight contributed to the loss. The basic loop is:
 
 * Initialize the neural network with random weights and biases
 * Repeat:
@@ -187,8 +180,8 @@ In practice, there are many libraries (which we will look at later) that have ef
 
 ![Backprop Figure](../res/alien17.png)
 
-### Potential Problems
-One problem that may arise when training a neural network is overfitting. This is very easy to occur, as neural networks are very complex. The first part of a neural network is deciding its architcture. When picking an architcture, the general rule of thumb is to pick an architecture that may be too complex for your application and apply some techniques to make it fit better.
+### Potential problems
+One common problem is [overfitting](../glossary.html#overfitting-underfitting), because a flexible network can learn training examples too specifically. Validation data, a suitable architecture, regularization, and early stopping can help.
 
 **Regularization**:
 
@@ -204,9 +197,20 @@ This is done in the neural network with training the weights. The dropout algori
 
 ![Dropout Figure](../res/alien19.png)
 
-----
+## Try it
 
-### Advanced Notes (Optional On First Pass)
+Draw a tiny network with two input features, two hidden units, and one output. Label the weights, biases, and activation functions. Then trace where an error signal must travel during training.
+
+## Quick self-check
+
+1. What three operations turn a perceptron's inputs into an output?
+2. Why do activation functions matter between layers?
+3. What information does backpropagation provide to gradient descent?
+
+Use [Knowledge Checks](../assessments/checkpoints.html) for answer guidance.
+
+## Optional Depth
+
 The following are useful but optional for first completion of the intro path:
 - Detailed regularization variants (L1 vs L2 tradeoffs)
 - Activation function derivative behavior in deep stacks
@@ -236,5 +240,6 @@ Neural Networks use many hyperparameters that we can fine-tune to get them to wo
   * The regularization term *λ*
 * **Dropout probability**: *p*
 
-### Mini!
-Now that you understand how neural networks work, go try out the [Mini](https://astarryknight.github.io/ai-ml/src/minis/ann.html) for this lesson!
+## Next step
+
+Apply the ideas in the [Artificial Neural Network practice project](../minis/ann.html).

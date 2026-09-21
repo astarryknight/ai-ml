@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  Optimization Playground
-parent: Minis
+parent: Practice
 nav_order: 6
 estimated_time: 2-3 hours
 prereqs:
@@ -13,30 +13,32 @@ outcomes:
 difficulty: Beginner
 ---
 
-## Optimization Playground: Gradient Descent Intuition
+# Optimization Playground
 
-If you haven't learned the optimization basics yet, start with the [Gradient Descent Theory lesson](https://astarryknight.github.io/ai-ml/src/theory/grad_desc.html).
+Build gradient-descent intuition by changing one setting and watching how the training path responds.
 
-### Objective
+If you haven't learned the optimization basics yet, start with [Optimization & Gradient Descent](../theory/grad_desc.html).
+
+## Goal
 Build intuition for optimization by training:
 1. A linear regression model with simple gradient descent (square trick idea)
 2. The same linear model with full-batch gradient descent and a visual loss landscape
 
-### Prerequisites
+## Before you start
 - Basic Python and NumPy
 - Intro to machine learning concepts (features, labels, loss)
 
 ### Setup
 Everything below is designed to run directly in Google Colab.
 
-### Tasks
+## Project map
 - Complete Part 1 and Part 2 with default parameters.
 - Re-run with at least two different learning rates and compare outcomes.
 - Write down one failure case and one successful configuration.
 
 ----
 
-### Part 1: Simple Gradient Descent (Linear Regression)
+## Phase 1: Build simple linear regression
 
 We will reuse the same idea from the theory lesson: start with random parameters, make predictions, compute error, and nudge parameters in the direction that reduces error.
 
@@ -189,7 +191,7 @@ What to try:
 
 ----
 
-### Part 2: Visualizing the Loss Landscape
+## Phase 2: Inspect the loss landscape
 
 Instead of moving to neural networks, let's stay with linear regression and build stronger intuition.
 
@@ -353,7 +355,7 @@ What to try:
 
 ----
 
-### Wrap-Up
+## Phase 3: Explain what happened
 
 You just used the same optimization idea twice:
 - In linear regression, gradient descent adjusted a line.
@@ -368,12 +370,12 @@ That shared loop is the core of most modern machine learning training.
 - Your plots show both convergence and at least one unstable/slow case.
 - You can report final RMSE/MSE values and compare settings.
 
-### Extensions
+## Phase 4: Extend
 - Add noise to the toy dataset and observe loss landscape changes.
 - Try normalizing inputs and compare convergence speed.
 - Plot parameter updates (`w`, `b`) versus epoch for one run.
 
-### Deliverable
+## Finish line
 - A Colab notebook that runs top-to-bottom.
 - Two figure outputs: fit/loss plot and contour/path plot.
 - A short markdown summary of: best setting, failed setting, and why.

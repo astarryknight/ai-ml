@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  NLP with Disaster Tweets
-parent: Minis
+parent: Practice
 nav_order: 4
 estimated_time: 4-6 hours
 prereqs:
@@ -14,28 +14,31 @@ outcomes:
 difficulty: Intermediate
 ---
 
-## Natural Language Processing with Disaster Tweets
+# NLP with Disaster Tweets
 (based on [this project](https://medium.com/bitgrit-data-science-publication/nlp-snippets-in-python-90ac29ffaea0))
 
-### Objective
+## Goal
 Predict which tweets are about real disasters and which are not.
 
-### Prerequisites
+## Before you start
 - Basic Python functions and loops
 - Familiarity with dataframes and string operations
+- Read the [Natural Language Processing](../theory/nlp.html) concept lesson
 
 ### Setup
 - Run in Google Colab.
 - Install required NLP dependencies from the setup section below.
 
-### Tasks
+## Project map
 - Implement the text-cleaning utility functions.
 - Build cleaned text features and inspect distributions.
 - Prepare outputs suitable for a downstream classifier.
 
 ----
 
-### Environment Setup
+## Phase 1: Prepare
+
+### Environment setup
 
 Install necessary data/libraries
 
@@ -131,7 +134,7 @@ A note on the libraries being used:
 *   tqdm: fast, extendible progress bar
 *   termcolor: color formatting for output
 
-### Text Cleanup and Preprocessing
+## Phase 2: Build the text pipeline
 **Convert to lowercase**
 
 Creating function to convert text to lowercase
@@ -278,7 +281,7 @@ def correct_spelling(text: str) -> str:
 
 ----
 
-### Reading the Data
+### Read the data
 
 ```python
 url_train = 'https://drive.google.com/file/d/16r3kpP6Z6Jpeb6TLXYAS_asj6YUyh575/view?usp=sharing'
@@ -329,7 +332,7 @@ df_train.head()
 
 ----
 
-### Text Preprocessing
+### Preprocess the text
 
 Creating a text cleaning pipeline using the functions we just made.
 
@@ -369,7 +372,7 @@ df_test["clean_text"] = df_test["text"].progress_apply(prepare, pipeline=pipelin
 
 ---- 
 
-### Data Visualizations
+## Phase 3: Inspect the text
 
 
 **n-grams**
@@ -453,17 +456,17 @@ From here, we can use **deep learning** models to predict for the target. For th
 
 ----
 
-### Validation
+## Phase 4: Validate
 - Cleaning pipeline runs on sample text and full dataset columns.
 - Frequency and n-gram visualizations are generated successfully.
 - Final cleaned text column is ready for model input.
 
-### Extensions
+## Phase 5: Extend
 - Compare lemmatization vs stemming impact on vocabulary size.
 - Add TF-IDF baseline model and report classification metrics.
 - Error-analyze misclassified tweets after a baseline classifier.
 
-### Deliverable
+## Finish line
 - Notebook with preprocessing + EDA figures.
 - Final cleaned dataset preview and feature extraction cell.
 - Short markdown summary of key language patterns discovered.

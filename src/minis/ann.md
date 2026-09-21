@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  Artificial Neural Network
-parent: Minis
+parent: Practice
 nav_order: 3
 estimated_time: 2-3 hours
 prereqs:
@@ -14,17 +14,23 @@ outcomes:
 difficulty: Intermediate
 ---
 
-## Artificial Neural Network Mini: MLP First, Linear Comparison Second
+# Artificial Neural Network
 
-If you have not done the ANN theory lesson yet, start [here](https://astarryknight.github.io/ai-ml/src/theory/ann.html).
+Train the nonlinear MLP first, then compare it with a linear model on the same data.
 
-### Objective
+If you have not completed the concept lesson, start with [Artificial Neural Networks](../theory/ann.html).
+
+## Goal
 Train a small nonlinear neural network in PyTorch, inspect its training metrics, and then compare it to a linear baseline.
 
 ### Why this dataset?
 We use `sklearn.datasets.make_moons` because it is perfect for visual intuition:
 - You can plot every point directly.
 - It clearly shows why nonlinear models can outperform linear ones.
+
+## Before you start
+
+This project assumes basic Python and NumPy plus the neural-network concept lesson. Run it in Google Colab or local Python.
 
 ### Setup
 Run in Google Colab (or local Python):
@@ -48,7 +54,7 @@ from sklearn.preprocessing import StandardScaler
 
 ---
 
-## Part 1: Build an Interesting Dataset
+## Phase 1: Prepare the data
 
 This section prepares the data so the network can learn from it cleanly:
 - `make_moons(...)` creates a two-class dataset with a curved shape, which is useful because a straight line will struggle to separate it.
@@ -97,7 +103,7 @@ Code walkthrough:
 
 ---
 
-## Part 2: Define the Nonlinear Neural Network (MLP)
+## Phase 2: Build the model
 
 We will start with a tiny MLP:
 - 2 inputs (`x1`, `x2`)
@@ -137,7 +143,7 @@ Code walkthrough:
 
 ---
 
-## Part 3: Train and Track Metrics
+## Phase 3: Train and track metrics
 
 We record:
 - train/test loss
@@ -199,7 +205,7 @@ Code walkthrough:
 
 ---
 
-## Part 4: Visualization 1 - Training Curves
+## Phase 4: Inspect training curves
 
 ```python
 fig, ax = plt.subplots(1, 2, figsize=(12, 4))
@@ -223,7 +229,7 @@ plt.show()
 
 ---
 
-## Part 5: Visualization 2 - Final MLP Decision Boundary
+### Inspect the final MLP decision boundary
 
 ```python
 # Grid for boundary plots
@@ -248,7 +254,7 @@ plt.show()
 
 ---
 
-## Part 6: End Comparison - Linear Model vs MLP
+## Phase 5: Compare the linear and nonlinear models
 
 Now use a linear baseline and compare it to the already-trained MLP.
 
@@ -339,19 +345,19 @@ plt.show()
 
 ---
 
-## Tasks
+## Phase 6: Extend
 1. Change hidden width in the MLP (`4`, `8`, `16`) and compare boundaries.
 2. Increase moon noise (`0.05`, `0.22`, `0.35`) and compare MLP vs linear accuracy gaps.
 3. Try MLP learning rates (`0.001`, `0.01`, `0.05`) and describe one unstable run.
 4. Explain in 3-4 sentences why the nonlinear model fits this dataset better.
 
-## Validation
+## Validate
 - MLP training runs end-to-end and reports test accuracy.
 - Dataset plot renders correctly.
 - Loss and accuracy curves render correctly.
 - Final MLP and side-by-side comparison plots render correctly.
 
-## Deliverable
+## Finish line
 - Notebook with all cells executed.
 - One screenshot of the final MLP decision boundary.
 - One screenshot of the final linear vs MLP boundary comparison.

@@ -2,8 +2,13 @@
 layout: post
 title:  Language in Brains, Minds, and Machines
 parent: Deep Reads
+grand_parent: Resources
 nav_order: 2
 ---
+
+# Language in Brains, Minds, and Machines
+
+This optional deep read considers how biological, cognitive, and computational perspectives can inform one another without treating them as the same thing.
 
 <style>
     .grid-container {
@@ -23,5 +28,3 @@ nav_order: 2
 </div>
 
 [Read the Paper](https://www.annualreviews.org/content/journals/10.1146/annurev-neuro-120623-101142){: .btn }
-
-

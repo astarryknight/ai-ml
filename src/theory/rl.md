@@ -1,7 +1,6 @@
 ---
-layout: post
-title:  5. Reinforcement Learning
-parent: Theory
+title:  Reinforcement Learning
+parent: Core Concepts
 nav_order: 7
 layout: katex
 estimated_time: 90-120 minutes
@@ -12,42 +11,42 @@ outcomes:
   - Define state, action, reward, and policy
   - Explain exploration vs exploitation
   - Understand value function intuition
-checkpoint: Module 8
 ---
 
-## Reinforcement Learning
+# Reinforcement Learning
+
 (based on [this video](https://www.youtube.com/watch?v=VnpRp7ZglfA))
 
-Reinforcement Learning (RL) is a field of machine learning that aims to create solutions to problems that can’t be hard-coded. It uses trial and error, along with positive and negative rewards, to reinforce and punish certain behaviors. It is appealing as it is very similar to how humans and animals learn about the world around them.
+Reinforcement learning (RL) studies how a decision-maker can improve through actions and feedback over time.
 
-Reinforcement learning has already been applied to many different applications, such as:
+**Suggested week:** 7, choose-one path · **Time:** 60–90 minutes · **Prerequisites:** Intro to Machine Learning and optimization intuition
 
-* Beating Atari games
-* Autonomous vehicles
-* Robotics
+## What you will learn
 
-and so much more!
+- Define an agent, environment, state, action, reward, and policy.
+- Explain why an agent must balance exploration and exploitation.
+- Interpret value as expected future reward.
 
-----
+RL can support games, robotics, resource control, and other sequential decisions. It is not the best fit for every problem: rewards can be difficult to design, exploration can be unsafe, and training can require many interactions.
 
-## Minimum Viable Understanding
-For first-pass async completion, focus on:
+## Core Path
+
+Focus on four ideas:
+
 1. Agent-environment interaction loop.
 2. Reward-driven learning over trajectories.
 3. Exploration vs exploitation balance.
 4. Value function intuition.
 
-----
+### Agents and environments {#agents-environments}
 
-### Agents & Environments
-
-In RL, there are two main components: **agent** and **environment**.
+In RL, the [agent](../glossary.html#agent) is the decision-maker. The environment is everything it can observe or affect but does not directly control.
 
 The agent is something you can directly control, while the environment is something that can’t be directly controlled, but interacted with through the agent. We refer to agent-environment interactions as **actions**, and environment-agent interactions as **states**, or some properties we are observing.
 
 The way we define all of these parameters is arbitrary, and this can actually be a good thing. It gives us freedom to choose which parameters help us solve the problem in the most efficient manner.
 
-In addition to actions, there are also **rewards** that are associated with the action (both positive and negative), generally regarded to flow from the environment to the agent.
+The environment returns a new state and a [reward](../glossary.html#reward-policy-value), which is feedback about the action. The goal is usually to maximize useful reward over time, not merely the next immediate reward.
 
 ----
 
@@ -148,11 +147,26 @@ In short, epsilon represents the proportion of time that actions are picked rand
 
 ----
 
-### Optional Depth (Second Pass)
+## Try it
+
+For a grid-world agent, define one state, four possible actions, and a reward rule. Then name one behavior the reward might accidentally encourage.
+
+## Quick self-check
+
+1. What information moves from the agent to the environment, and what comes back?
+2. How is a policy different from a value function?
+3. Why can always choosing the current best-known action prevent learning?
+
+Use [Knowledge Checks](../assessments/checkpoints.html) for answer guidance.
+
+## Optional Depth
+
 You can revisit these topics after completing core minis:
 - Policy gradient variance issues and baselines
 - Generalized policy iteration convergence details
 - Function approximation and deep RL stability concerns
 
 
-Now that you’ve mastered the basics of RL, let’s try out [Playing Snake with RL](https://astarryknight.github.io/ai-ml/src/minis/rl.html)
+## Next step
+
+Apply the ideas in the advanced [Snake with RL project](../minis/rl.html), or choose the [NLP path](./nlp.html) for a more beginner-friendly Week 7 option.

@@ -1,50 +1,62 @@
 ---
 layout: post
 title:  Spotify Music Recommendation
-parent: Minis
+parent: Practice
 nav_order: 2
-estimated_time: 4-6 hours
+estimated_time: 3-5 hours
 prereqs:
-  - Intro to Machine Learning
-  - Numpy/Pandas basics
+  - Week 1 NumPy basics
+  - Basic pandas table operations
 outcomes:
   - Clean real-world tabular data
   - Build and interpret K-Means clusters
   - Produce simple recommendation logic
-difficulty: Intermediate
+difficulty: Beginner
+track: Core weekly project
 ---
 
-## Spotify Intelligent Music Recommendation
-Now that you have some experience with machine learning models, let's put them to use! For this mini, we will be using a dataset of nearly 1000 of Spotify's most streamed songs to create a music recommendation system.
+# Spotify Music Recommendation
 
-There are many ways to go about this, but we'll focus on an unsupervised model (more specifically, clustering) to make recommendations.
+Build a simple similarity-based recommender from a small Spotify dataset. This is a teaching project, not a production recommendation system.
 
-### Objective
-Build a clustering-based recommendation workflow on a real music dataset.
+There are many ways to build recommenders. In the core version, use a small set of numeric audio features, scale them, cluster the songs, and return tracks from the same cluster as a selected song.
 
-### Prerequisites
+## Goal
+Build and explain a clustering-based recommendation workflow on a real music dataset.
+
+## Before you start
 - Comfortable with Pandas data cleaning
-- Basic understanding of clustering and feature scaling
+- Read the [clustering explanation](../theory/intro_ml.html#clustering) and [feature-scaling section](../theory/feature_engineering.html#feature-scaling)
 
 ### Setup
 - Use Google Colab or a local notebook environment.
 - Download dataset: [spotify-2023.csv](../datasets/spotify-2023.csv)
+- In Colab, use the raw file URL in the starter notebook or upload the CSV when prompted.
 
-### Tasks
+## Project map
 - Clean and preprocess the dataset.
 - Build clustering features and train K-Means.
-- Analyze clusters and implement track-based recommendations.
+- Inspect the clusters and implement track-based recommendations.
+- Validate a few results, then choose an extension only if the core path works.
 
 ----
 
-### Loading the Data
-Download the dataset from [here](../datasets/spotify-2023.csv)
+## Phase 1: Prepare
+
+### Load the data
+Download the dataset from [here](../datasets/spotify-2023.csv), or load the raw file directly in Colab:
 ```python
 import pandas as pd
 import numpy as np
-path = '../datasets/spotify-2023.csv' #replace this with your path/to/dataset
-df = pd.read_csv(path, encoding='latin-1')
+url = 'https://raw.githubusercontent.com/astarryknight/ai-ml/main/src/datasets/spotify-2023.csv'
+df = pd.read_csv(url, encoding='latin-1')
 ```
+
+## Phase 2: Build
+
+Complete Phases 1–6 through **Make recommendations**. Use a small feature subset such as `bpm`, `danceability_%`, `energy_%`, `valence_%`, and `acousticness_%`.
+
+The PCA, 3D visualization, large cluster-distribution plot, and popularity ranking sections are optional extensions.
 
 ```python
 df.head()
@@ -130,7 +142,7 @@ speechiness_%            0
 dtype: int64
 ```
 
-Null keys account for 10% of all the rows meaning that this column is likely unreliable. We can either remove about 10% of our rows or remove a column. For the sake of keeping variety in our data points, we will drop the key column for traing the model.
+Null keys account for about 10% of the rows, so this column is likely unreliable. We can either remove those rows or drop the column. To keep more data points, we drop the key column before training.
 
 ```python
 df.drop(columns=['key'], inplace=True)
@@ -143,7 +155,7 @@ df['in_shazam_charts'] = df['in_shazam_charts'].replace(',','', regex=True)
 ```
 
 ```python
-df['in_shazam_charts'] = df['in_shazam_charts'].fillna(df['in_shazam_charts'].notnull().median()).astype(np.int64)
+df['in_shazam_charts'] = df['in_shazam_charts'].fillna(df['in_shazam_charts'].median()).astype(np.int64)
 ```
 
 ```python
@@ -273,7 +285,9 @@ Unsurprisingly, Taylor Swift has 34 appearances on the top charts.
 The data looks pretty good so far, so let's move on to some basic visualizations.
 
 ----
-### Basic Visualizations
+## Phase 3: Inspect
+
+### Basic visualizations
 ```python
 import seaborn as sns
 ```
@@ -289,10 +303,10 @@ c = sns.color_palette("pastel")
 artist_counts.head(10).plot.bar(color=c)
 plt.xlabel("Artist")
 plt.ylabel("Frequency")
-plt.title('Artist Occurance in top 1000 Songs of 2023')
+plt.title('Artist Occurrence in Top 1000 Songs of 2023')
 ```
 
-![Spotify Artist Occurance](../res/spotify_artist_occ.png)
+![Spotify Artist Occurrence](../res/spotify_artist_occ.png)
 
 
 **Release Year**
@@ -357,7 +371,7 @@ Now we have a good idea of what our data is like. We can now move on to machine 
 
 ----
 
-## Preparing for Machine Learning
+## Phase 4: Prepare model features
 Before we move on to machine learning, we have to look deeper into the variable we will be using. We will be using a clustering algorithm, meaning that there are no labels to worry about. With that being said, there is still an issue with categorical and numeric data. We observe that month is denoted with a numeric value. This does not really make any sense as a numeric value, and works better as a categorical variable. Let's make this change.
 
 ```python
@@ -377,7 +391,7 @@ df['released_month'] = df['released_month'].astype(object)
 df.released_month = df.released_month.apply(lambda x: month_number_to_name(x))
 ```
 
-Before we run this on the machine learning model, we will have to encode catagorical variables.
+Before we run this through the machine-learning model, we have to encode categorical variables.
 
 ```python
 dummies = pd.get_dummies(df['mode'],prefix="mode")
@@ -443,8 +457,11 @@ We can see that columns are numeric. We are now ready to train our model.
 
 ----
 
-### K-means Clustering
-Clustering algorithms are a type of unsupervised learning algorithm that focuses on grouping similar data points. We discussed a bit on clustering last week, so look back to that for a refesher. As mentioned last week, there are many types of clustering algorithms. For this project, we will focus on a rather popular clustering algorithm called, **K-Means Clustering**.
+## Optional Depth: implement K-means updates
+
+For a first pass, you can skip the manual implementation and continue to [Phase 5](#phase-5-train-with-scikit-learn). Review the [clustering section of Intro to Machine Learning](../theory/intro_ml.html#clustering) if you need the conceptual explanation.
+
+K-means alternates between assigning each point to its nearest center and moving each center to the mean of its assigned points. This section implements those updates to expose the mechanics; the core project uses scikit-learn.
 
 We will utilize this clustering algorithms to group songs into clusters. Based on the listener's last played song, we will look at similar songs (songs in the same cluster) to recommend other songs.
 
@@ -473,7 +490,7 @@ E-M is a powerful general algorithm that appears throughout ML and data science 
 
 ![E-M Figure](../res/k_means_em.png)
 
-Note that E-M only guarentees to improve the result in each step, but there is no assurance that it will lead to the *global* best solution. Basically, depending on the starting result, we might improve on an overall worse solution than to what we had previously.
+E-M improves the result at each step, but it does not guarantee the *global* best solution. Different starting points can produce different cluster assignments.
 
 This algorithm is relatively simple, so let's go ahead and code it!
 
@@ -563,7 +580,7 @@ With all that explanation done, let's hop back to our Spotify data!
 
 ----
 
-### Training Model
+## Phase 5: Train with scikit-learn {#phase-5-train-with-scikit-learn}
 **Clusters - Find the optimal number of clusters**
 ```python
 from sklearn.preprocessing import StandardScaler
@@ -648,7 +665,7 @@ To get a better picture of our clusters, let's create some visualizations!
 
 ----
 
-### Visualization using PCA
+## Optional Depth: inspect clusters with PCA
 We obviously can't see in 20 dimensions, so we have to reduce these dimensions in order to visualize. So, let's use **PCA**!
 
 **Compress data to two input variables. This will allow us to view the clusters in two dimensions.**
@@ -723,7 +740,9 @@ plt.show()
 
 ----
 
-### Your Turn! Making Recommendations
+## Phase 6: Recommend and validate
+
+### Make recommendations
 To make recommendations, we need to implement the following:
 1. The user must input a valid track name and artist of their last played song
 2. The program searches the dataset for this song and artist and retrieves the cluster associated with this particular track.
@@ -766,12 +785,12 @@ And with that you have made a spotify recommendation algorithm! Congratulations!
 - Cluster assignment is generated for each usable track.
 - Recommendation query returns tracks from the same cluster for a valid input.
 
-### Extensions
+## Phase 7: Extend
 - Compare multiple `k` values and justify your final choice.
 - Add popularity-weighted ranking within each cluster.
 - Evaluate recommendation quality manually for 3-5 seed songs.
 
-### Deliverable
+## Finish line
 - One notebook that runs end-to-end.
 - Final table of recommendations for at least three sample songs.
 - Short markdown summary of preprocessing decisions and cluster interpretation.

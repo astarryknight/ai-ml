@@ -1,7 +1,7 @@
 ---
 layout: post
-title:  Snake with RL
-parent: Minis
+title:  Snake with RL (Advanced Extension)
+parent: Practice
 nav_order: 5
 estimated_time: 6-10 hours
 prereqs:
@@ -11,31 +11,37 @@ outcomes:
   - Build an RL environment-agent training loop
   - Train and visualize game score progression
   - Explain exploration-exploitation behavior in practice
-difficulty: Advanced
+difficulty: Advanced extension
+track: Local extension
 ---
 
-## Playing Snake with RL
+# Snake with RL (Advanced Extension)
 (based on [this project](https://github.com/vedantgoswami/SnakeGameAI))
 
-Note: I highly recommend running this on a [local setup](https://astarryknight.github.io/ai-ml/src/intro/local.html), as Colab doesn't have good support for pygame.
+This project is an advanced extension, not a requirement for the core 10-week path. It requires local setup, Python classes, PyTorch, and pygame. For a beginner-friendly introduction to RL, start with the [Reinforcement Learning theory lesson](../theory/rl.html) and use a small GridWorld or bandit notebook first.
 
-### Objective
+Note: run this project on a [local setup](../intro/local.html), as Colab does not have reliable support for pygame windows.
+
+## Goal
 Train an RL agent to improve Snake gameplay using reward-driven learning.
 
-### Prerequisites
+## Before you start
 - Comfort with Python OOP and control flow
 - Basic understanding of tensors and neural network training
 
 ### Setup
-- Prefer local environment (pygame support).
-- Install dependencies listed below.
+- Use the local environment described in [Optional Local Setup](../intro/local.html).
+- Install the dependencies listed below.
+- Keep a saved sample output available if training is slow or fails on your machine.
 
-### Tasks
+## Project map
 - Implement environment and agent components.
 - Train the model and track score progression.
 - Interpret exploration-to-exploitation behavior during training.
 
 ----
+
+## Phase 1: Prepare
 
 ### Dependencies
 We need a few dependencies for this project, which you can install using pip or anaconda:
@@ -46,7 +52,7 @@ We need a few dependencies for this project, which you can install using pip or 
 
 ----
 
-### Setting up the game
+### Set up the game
 Before we can do any RL, let's setup our game environment. We'll use pygame for the game visualization.
 
 **imports**
@@ -218,7 +224,7 @@ class SnakeGameAI:
 ----
 
 
-### Agent
+## Phase 2: Build the agent
 Now that we've setup our game, lets work on our agent.
 
 **imports and variables**
@@ -376,7 +382,7 @@ def train():
 
 ----
 
-### Prediction Model
+### Prediction model
 This prediction model implements a deep Q-learning framework, which approximates our Q-function, or the expected cumulative reward for a given action in a given state.
 
 **imports**
@@ -462,7 +468,7 @@ class QTrainer:
 
 ---- 
 
-### Visualization
+## Phase 3: Inspect training
 The last thing to do is define our visualization tools for when our RL script is running.
 
 **imports**
@@ -493,7 +499,7 @@ def plot(scores, mean_scores):
 
 ---
 
-### Running the Code
+## Phase 4: Run and validate
 Now that we have all of this defined, all we have to do is run it!
 
 ```python
@@ -511,12 +517,12 @@ This will start training the RL model. For the first few epochs, the behavior wi
 - Score graph trends upward over time (with expected variance).
 - Agent behavior qualitatively improves from random to strategic.
 
-### Extensions
+## Phase 5: Extend
 - Try different epsilon decay schedules and compare learning speed.
 - Modify reward shaping and observe policy changes.
 - Save and reload model checkpoints for reproducible runs.
 
-### Deliverable
+## Finish line
 - Runnable training script/notebook.
 - Score plot image and a short analysis of training behavior.
 - Notes on one hyperparameter experiment and outcome.

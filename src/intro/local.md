@@ -1,47 +1,75 @@
 ---
 layout: post
-title:  2. Local Setup (optional)
-parent: Intro
+title:  Optional Local Setup
+parent: Foundations
 nav_order: 3
+estimated_time: 30-60 minutes
+prereqs:
+  - A completed Colab notebook
+outcomes:
+  - Know when local setup is useful
+  - Create a Python environment with one tested method
+  - Run extension projects that need local packages
 ---
 
-## Local Setup
-If you'd like, you can set up a working environment on your own computer. If you would like to use [Google Colab](https://colab.research.google.com) instead, then you can skip this article.
+# Optional Local Setup
 
-## IDE ([vscode](https://code.visualstudio.com) recommended)
+## When to use local setup
 
-To follow along with this course you'll need an Integrated Development Environment (IDE). This is where you'll be able to write and run all of your code. If you don't have one already, we recommend installing [VSCode](https://code.visualstudio.com).
+The core course runs in [Google Colab](https://colab.research.google.com). Use local setup only when you want to work offline, use a local IDE, or complete an extension such as [Snake with RL](../minis/rl.html).
 
-## Python
+If you are new to the course, skip this page and start with [Foundations](./intro.html).
 
-Once you have your IDE installed, you'll need to install python on your system. [Python's site](https://www.python.org/downloads/) should help you download and setup python on your system.
+## Python and an editor
 
-## pip vs. conda
+Install [Python](https://www.python.org/downloads/) and use any Python-capable editor. [VS Code](https://code.visualstudio.com/) is one reasonable choice, but it is not required.
 
-Python has many **package managers** which help you download and use libraries from the web, such as numpy, pandas, and many others which we will cover throughout the course.
+## Choose one environment manager
 
-### pip
-If you are using **Windows**, I'd recommend using ```pip```, which comes preinstalled with Python.
-To create a new environment with pip:
-1. ```python -m venv env_name```
-2. ```.\env_name\Scripts\activate```
+You only need one setup path. Do not install both `pip` and Conda environments for the same project.
 
-To install packages in your environment, run ```pip install <package_name>```.
-To deactivate your environment, run ```deactivate```
+### Python virtual environment
 
-### conda
-If you are using **MacOS**, ```Anaconda``` is a very usefull tool for managing installs and environments. It is available on Windows, but I found it to be tough to use as it was not enabled in all terminals. To install Conda:
-1. Install [Homebrew](https://brew.sh) (optional, but recommended)
-2. Run the command ```brew install --cask anaconda``` to install conda on your system.
+```bash
+python -m venv aiml
+```
 
-To create a new environment, you can use ```conda create -n env_name python=3.9```. 
-To activate your environment, run ```conda activate env_name```.
-To install packages in your environment, use ```conda install <package_name>```. 
-To deactivate your enviuronment, run ```conda deactivate```.
+Activate it:
 
-## git
+```bash
+# macOS/Linux
+source aiml/bin/activate
 
-Git is an important way to interact with your files. It is a version control system and is commonly used with [Github](https://github.com), a large code storage, sharing, and hosting site. If you don't already have a Github account, [create one now](https://github.com/signup).
-To get started with git, install and setup using [their site](https://git-scm.com/downloads).
+# Windows PowerShell
+.\aiml\Scripts\Activate.ps1
+```
 
-VSCode has a built-in version control tab that allows you to interact with git and github. For more info, visit [their guide](https://code.visualstudio.com/docs/sourcecontrol/overview).
+Install the core packages:
+
+```bash
+python -m pip install numpy pandas matplotlib scikit-learn jupyter
+```
+
+Deactivate with `deactivate`.
+
+### Conda
+
+If you already use Conda, install [Miniconda](https://docs.conda.io/projects/miniconda/en/latest/) and run:
+
+```bash
+conda create -n aiml python=3.11
+conda activate aiml
+conda install numpy pandas matplotlib scikit-learn jupyter
+```
+
+Deactivate with `conda deactivate`.
+
+## Git and GitHub
+
+Git is useful for saving project history and publishing a portfolio. It is optional for Weeks 1–6, but recommended for the capstone. Start with the [Git installation guide](https://git-scm.com/downloads) and the [GitHub documentation](https://docs.github.com/en/get-started).
+
+## Troubleshooting
+
+- If a package import fails in Colab, restart the runtime and rerun the setup cell.
+- If a local notebook uses the wrong Python version, select the `aiml` environment as the notebook kernel.
+- If a project only works locally, keep a saved sample output in the repository so another student can still understand the expected result.
