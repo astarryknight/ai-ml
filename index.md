@@ -8,20 +8,6 @@ nav_order: 1
 
 This site is a beginner-friendly learning library for AI and machine learning. You can follow the material week by week, catch up on a session you missed, or browse a single topic whenever you need it. The core examples run in Google Colab, so you can begin in a browser without installing anything.
 
-## Choose your route
-
-### I am new to AI
-
-Begin with [Foundations](./src/intro/intro.html), then read [What is AI/ML?](./src/intro/whatisai.html). Week 1 ends with a small NumPy activity and a first machine-learning prediction.
-
-### I want to learn a specific topic
-
-Use [Core Concepts](./src/theory/theory.html) to browse machine-learning workflows, optimization, evaluation, neural networks, natural-language processing, and reinforcement learning.
-
-### I want to build something
-
-Open [Practice](./src/minis/minis.html) for guided notebooks, knowledge checks, and demos, or use [Build a Project](./src/capstone.html) to turn an idea into a reproducible project.
-
 ## Catch up by week
 
 You do not need to attend the in-person sessions to use this material. Pick a week, read the linked lesson, and complete the practice activity at your own pace.
@@ -41,6 +27,20 @@ You do not need to attend the in-person sessions to use this material. Pick a we
 | 9 | Build, evaluate, and revise a prototype | [Project milestone 2](./src/capstone.html#milestone-2) |
 | 10 | Package and explain the result | [Project milestone 3](./src/capstone.html#milestone-3) |
 {: .weekly-materials }
+
+## Choose your route
+
+### I am new to AI
+
+Begin with [Foundations](./src/intro/intro.html), then read [What is AI/ML?](./src/intro/whatisai.html). Week 1 ends with a small NumPy activity and a first machine-learning prediction.
+
+### I want to learn a specific topic
+
+Use [Core Concepts](./src/theory/theory.html) to browse machine-learning workflows, optimization, evaluation, neural networks, natural-language processing, and reinforcement learning.
+
+### I want to build something
+
+Open [Practice](./src/minis/minis.html) for guided notebooks, knowledge checks, and demos, or use [Build a Project](./src/capstone.html) to turn an idea into a reproducible project.
 
 ## Useful references
 
