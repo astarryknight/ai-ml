@@ -12,14 +12,16 @@ outcomes:
   - Build and interpret K-Means clusters
   - Produce simple recommendation logic
 difficulty: Beginner
-track: Core weekly project
+track: Extension project
 ---
 
 # Spotify Music Recommendation
 
 Build a simple similarity-based recommender from a small Spotify dataset. This is a teaching project, not a production recommendation system.
 
-There are many ways to build recommenders. In the core version, use a small set of numeric audio features, scale them, cluster the songs, and return tracks from the same cluster as a selected song.
+New to recommendation systems? Start with the shorter Week 5 notebook: [Open Song Recommendations with Similarity in Colab](https://colab.research.google.com/github/astarryknight/ai-ml/blob/main/notebooks/week-05-song-recommender.ipynb) or [download it](../../notebooks/week-05-song-recommender.ipynb). Return here when you want the extended project and larger dataset.
+
+There are many ways to build recommenders. In this extended version, use a larger set of numeric audio features, scale them, cluster the songs, and return tracks from the same cluster as a selected song.
 
 ## Goal
 Build and explain a clustering-based recommendation workflow on a real music dataset.

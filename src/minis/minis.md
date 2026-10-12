@@ -17,17 +17,16 @@ Each project should produce a runnable notebook or demo, one plot or table, and 
 
 ## Core weekly projects
 
-1. Week 1: [Array Explorer, First Graph, and First ML Model](https://colab.research.google.com/github/astarryknight/ai-ml/blob/main/notebooks/week-01-array-explorer.ipynb) ([download](../../notebooks/week-01-array-explorer.ipynb))
+1. Week 1: [Array Explorer, First Graph, and First ML Model](https://colab.research.google.com/drive/1YfhgWBdWuX0SaoxQwWbvTKpVeIgSuPlO?usp=sharing) ([download](../../notebooks/week-01-array-explorer.ipynb))
 2. Week 2: [Baseline and Linear Regression](https://colab.research.google.com/github/astarryknight/ai-ml/blob/main/notebooks/week-02-regression-baseline.ipynb) ([download](../../notebooks/week-02-regression-baseline.ipynb))
 3. Week 3: [Classification and Error Tradeoffs](https://colab.research.google.com/github/astarryknight/ai-ml/blob/main/notebooks/week-03-classification-errors.ipynb) ([download](../../notebooks/week-03-classification-errors.ipynb))
-4. Week 4: [Data Quality and Reproducible Pipelines](https://colab.research.google.com/github/astarryknight/ai-ml/blob/main/notebooks/week-04-data-pipeline.ipynb) ([download](../../notebooks/week-04-data-pipeline.ipynb))
-5. [Spotify Music Recommendation](./spotify.html)
-6. Small neural-network upgrade using the [ANN lesson](../theory/ann.html)
+4. Week 4: [Reliable Data and Pipelines](https://colab.research.google.com/github/astarryknight/ai-ml/blob/main/notebooks/week-04-data-pipeline.ipynb) ([download](../../notebooks/week-04-data-pipeline.ipynb))
+5. Week 5: [Song Recommendations with Similarity](https://colab.research.google.com/github/astarryknight/ai-ml/blob/main/notebooks/week-05-song-recommender.ipynb) ([download](../../notebooks/week-05-song-recommender.ipynb)); continue to the [extended Spotify project](./spotify.html) if you want a larger dataset
+6. Week 6: [Neural Networks and Handwritten Digits](https://colab.research.google.com/github/astarryknight/ai-ml/blob/main/notebooks/week-06-digit-classifier.ipynb) ([download](../../notebooks/week-06-digit-classifier.ipynb)); use the [extended walkthrough](./ann.html) for more support
 
 ## Extension projects
 
 - [Optimization Playground](./opt.html) - visual gradient-descent practice
-- [Artificial Neural Network](./ann.html) - deeper PyTorch model comparison
 - [NLP with Disaster Tweets](./nlp.html) - optional text classification
 - [Snake with RL](./rl.html) - advanced local reinforcement-learning project
 

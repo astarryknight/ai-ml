@@ -1,245 +1,290 @@
 ---
-title:  Artificial Neural Networks
+title: Artificial Neural Networks
 parent: Core Concepts
 nav_order: 5
 layout: katex
-estimated_time: 2-3 hours
+estimated_time: 90-120 minutes
 prereqs:
   - Intro to Machine Learning
   - Optimization & Gradient Descent
 outcomes:
-  - Explain perceptrons and layered networks
-  - Describe backpropagation at a conceptual level
-  - Identify basic overfitting risks
+  - Explain how a neural network turns inputs into a prediction
+  - Describe hidden layers, activations, and backpropagation
+  - Evaluate a small image classifier and inspect its mistakes
 ---
 
 # Artificial Neural Networks
 
-(based on [this textbook](https://www.google.com/books/edition/Grokking_Machine_Learning/fNhOEAAAQBAJ?hl=en&gbpv=0))
-
-[Neural networks](../glossary.html#neural-network) combine simple mathematical units into layers that can represent nonlinear patterns. They were historically inspired by biological neurons, but they are mathematical models rather than simulations of a brain.
+[Neural networks](../glossary.html#neural-network) learn combinations of input features that help make a prediction. A handwritten-digit classifier makes each part concrete: pixels become inputs, hidden layers combine visual evidence, and the output represents the model's guess.
 
 **Suggested week:** 6 · **Time:** 90–120 minutes · **Prerequisites:** Intro to Machine Learning and Optimization
 
 ## What you will learn
 
 - Explain how inputs, weights, a bias, and an activation produce an output.
-- Describe how layers can form nonlinear decision boundaries.
-- Explain training and backpropagation at a conceptual level.
-
-Neural networks are used in image recognition, language processing, medicine, robotics, and many other fields. Deep learning refers to using neural networks with multiple learned layers.
+- Trace an image through the input, hidden, and output layers.
+- Describe training and backpropagation without calculating derivatives by hand.
+- Use a confusion matrix and misclassified images to evaluate a model.
 
 ## Core Path
 
 Prioritize these ideas on a first pass:
 
-1. A perceptron is a weighted sum + bias + activation.
-2. Stacking perceptrons allows nonlinear decision boundaries.
-3. Training updates weights to reduce loss with backpropagation and gradient descent.
-4. Overfitting is common and must be managed.
-
-After these are clear, continue through the full examples.
-
----
-
-## Example - Alien Planet
-To understand Neural Networks better, we will explore an example where we are on a distant planet inhhabited by aliens. Their language is formed by 2 words, "*aack*" and "*beep*", and we want to build an ML model that will tell us whether an alien is happy or sad based one what they say. This is also an example of a *sentiment analysis* model.
-
-Below is a dataset that contains sentences, the frequency of occurences of each word, and the determined mood (by external means):
-
-![Alien Table](../res/alien1.png)
-
-Here's a plot of the data:
-
-![Alien Plot1](../res/alien2.png)
-
-By the looks of the data, we wont be able to use a *linear classifier*, or split the happy and sad faces with just a straight line. Instead, we can use perceptrons to separate the points in the graph. We can build this network using 2 lines instead of one!
+1. An image can be represented as numbers.
+2. One neuron computes a weighted combination of its inputs.
+3. Hidden layers learn useful combinations of simple signals.
+4. Training adjusts weights to reduce prediction error.
+5. Evaluation must use images the model did not train on.
 
 ---
 
-### 2 Lines
+## Running example: recognizing handwritten digits
 
-![Alien Plot2](../res/alien3.png)
-Above is one example of 2 lines we could draw that would help us classify the data by the type of face. The equations would be:
-* 6xₐ+10xᵦ-15 ≥ 0
-* 10xₐ+6xᵦ-15 ≥ 0
+Suppose we want a model to recognize handwritten digits from `0` through `9`. We will use scikit-learn's built-in digits dataset. It contains small 8×8 grayscale images, so every image has 64 pixels.
 
+Each pixel is a number from `0` to `16`:
 
-Where xₐ is the number of times *aack* appears and xᵦ is the number of times *beep* appears
+- `0` means the pixel is dark.
+- Larger values mean the pixel is brighter.
+- The label is the digit shown in the image.
 
-![Alien Table2](../res/alien4.png)
+One image therefore becomes a row of 64 input features:
 
-The reason that we can't really model this happiness with 1 line is because happiness is not based on one thing, but many things - maybe having a fulfilling career, good family life, good friends, etc. Happiness is reliant on multiple factors, and therefore can't be modeled by a single line! In this model, we use 2 **perceptrons** to model the sentiment of the sentences.
+```text
+8 × 8 image → 64 pixel values → model → predicted digit
+```
 
-![Alien Graph](../res/alien5.png)
+This is the same supervised-learning workflow used earlier in the course. The data type changed, but the roles did not:
 
-### Combining Perceptrons
+| Course idea | Digit example |
+| --- | --- |
+| Sample | One handwritten image |
+| Features | The 64 pixel brightness values |
+| Target | The correct digit, 0 through 9 |
+| Prediction | The digit selected by the model |
+| Error analysis | Looking at images the model confused |
 
-Neural networks can take the outputs of two units as inputs to another unit. In this simplified example, the units output either 0 or 1. Using our functions, we can define family and career happiness classifiers:
-
-
-**Career happiness classifier**
-* Weights:
-  * *Aack*: 6
-  * *Beep*: 10
-* Bias: -15
-* Score of a sentence: 6xₐ+10xᵦ-15
-* Prediction: F=*step*(6xₐ+10xᵦ-15)
-
-
-
-**Family happiness classifier**
-* Weights:
-  * *Aack*: 10
-  * *Beep*: 6
-* Bias: -15
-* Score of a sentence: 10xₐ+6xᵦ-15
-* Prediction: F=*step*(10xₐ+6xᵦ-15)
-
-**Overall happiness classifier**
-* Weights:
-  * *Career*: 1
-  * *Family*: 1
-* Bias: -1.5
-* Score of a sentence: 1 · C + 1 · F - 1.5
-* Prediction: F=*step*(1 · C + 1 · F - 1.5)
-
-![Classifiers Combined](../res/alien6.png)
-
-The name comes from a loose analogy with connected biological neurons. A perceptron receives numbers, combines them using weights and a bias, applies an [activation function](../glossary.html#activation-function), and produces a new number.
-
-### Graphical Representation of Perceptrons
-![Perceptron](../res/alien8.png)
-
-Formally, a perceptron is defined with the following properties:
-* Inputs: x1, x2, ..., xn
-* Weights: w1, w2, ..., wn
-* Bias: b
-* An activation function: Either the step function (for discrete perceptrons) or the sigmoid function (for continuius perceptrons)
-* A prediction: Defined by the formula *y=f(w1x1 + w2x2 + ... + wnxn + b)*, where *f* is the corresponding activation function
-
-These properties can be seen in the visual representation above: The inputs are the nodes on the left, with the final node being 1. The weights are the edges connecting the inputs to the activation function, with the final edge being the bias. The operations for calculating the prediction happen in the activation function, and that node produces the output. At each perceptron, one can modify the weights and the bias. You can imagine that if we have many perceptrons, there would be many more parameters to be adjusted.
-
-![ANN](../res/alien9.png)
-
-### Graphical Representation of Neural Networks
-
-![Neural Net Bio](../res/alien10.png)
-
-As mentioned, a neural network is made up of many perceptrons. It is made to loosely emulate the human brain, in which the output of several neurons becomes the input to another neuron. In the same way, in a neural network, the output of several perceptrons becomes the input of another perceptron. In practice, step functions are never used for neural networks because it would make it impossible to use gradient descent - so, the sigmoid function is widely used in neural networks.
-
-![Combined Perceptrons Math](../res/alien11.png)
+The example remains useful beyond this lesson. Larger image models still begin with numeric pixel values, learn internal representations, and produce predictions that must be evaluated.
 
 ---
 
-### The Boundary of a Neural Network
+## One neuron: combine evidence
 
-![Single Perceptron Boundaries](../res/alien12.png)
+A neuron receives numbers, multiplies them by learned weights, adds a bias, and applies an [activation function](../glossary.html#activation-function).
 
-![Network Boundaries](../res/alien13.png)
+$$
+z = w_1x_1 + w_2x_2 + \dots + w_nx_n + b
+$$
 
-Perceptrons have boundaries which define outputs based on their region. This is the same as the inequalities we defined earlier, just in a graphical way.
+$$
+\text{output} = f(z)
+$$
+
+![Inputs pass through weights, a bias, and an activation function](../res/alien8.png)
+
+For a digit image:
+
+- Each $x_i$ is a pixel value.
+- Each $w_i$ controls how strongly that pixel influences the neuron.
+- The bias $b$ shifts when the neuron becomes active.
+- The activation $f$ lets the network represent nonlinear patterns.
+
+It is tempting to give every hidden neuron a human label such as "top loop detector." Sometimes a learned unit responds to a recognizable pattern, but hidden features are not guaranteed to have a simple human interpretation. The safer idea is that each unit learns a useful combination of pixels.
+
+### A tiny calculation
+
+Imagine a simplified neuron that looks at only three pixels:
+
+```text
+pixel values:  [0.9, 0.2, 0.8]
+weights:       [1.0, -0.5, 0.7]
+bias:          -0.4
+```
+
+Its score is:
+
+$$
+(0.9)(1.0) + (0.2)(-0.5) + (0.8)(0.7) - 0.4 = 0.96
+$$
+
+The activation function transforms that score before passing it to the next layer. Training determines the useful weights; we do not choose them by hand.
 
 ---
 
-### General Architecture of a Fully Connected Network
+## Layers build a prediction
 
-In our example, we used a relatively small neural network. In practice neural networks are composed of many layers. The first layer is referred to as the input layer, the final layer is the output layer, and all intermediary layers are called hidden layers. The arrangement of nodes and layers is referred to as the *architechture* of the neural network. The total number of ayers is referred to as the *depth* of the neural network.
+A small digit network might have:
 
-![FC Diagram](../res/alien14.png)
+```text
+64 inputs → 32 hidden units → 10 output scores
+```
 
-The size of a layer counts the non-bias nodes. In the above example, each node in one layer is connected to all nodes in the next layer. This is an example of a connected *architecture*.
+![A fully connected neural network with input, hidden, and output layers](../res/alien14.png)
 
-![FC Curves](../res/alien15.png)
+### Input layer
 
-This is a good visual example of a neural network, showing how the boundaries become more complex as you get deeper into the architecture.
+The input layer receives the 64 normalized pixel values. It does not make a decision by itself.
+
+### Hidden layer
+
+Every hidden unit computes a different weighted combination of the pixels. Together, the hidden units can represent patterns that a single linear classifier may not capture well.
+
+### Output layer
+
+The network produces one score for each possible digit. A softmax operation converts the ten scores into values that sum to `1`. The largest value determines the predicted class.
+
+For example:
+
+```text
+digit:        0    1    2    3    4    5    6    7    8    9
+probability: .01  .00  .02  .04  .01  .78  .02  .03  .08  .01
+```
+
+The model predicts `5`, but the full set of probabilities also shows its uncertainty.
 
 ---
 
-### Training Neural Networks
+## Why activation functions matter
 
-Now that we've learned what a neural network is, let's explore how we can train one. In theory, training a neural network is not difficult. However, it can be very computationally expensive.
+Without nonlinear activations, stacking several linear layers would still behave like one linear transformation. Activations allow layers to build more flexible representations.
 
-### Error
+For this lesson, remember two:
 
-Here is the error function we can use to see how our neural network is performing. It will return a small value if the label and prediction are close to each other and a large value if they are not. In practice, neural networks can use a wide variety of loss functions, and can have extra terms to regularize the model's output.
+- **ReLU:** returns `0` for a negative input and returns the input itself when it is positive. It is common in hidden layers.
+- **Softmax:** converts the final class scores into a distribution across the ten digits.
 
-![Loss Function](../res/alien16.png)
+The practice activity uses ReLU inside the network. scikit-learn handles the output calculation for multiclass classification.
 
-### Backpropagation
-We use [gradient descent](./grad_desc.html) to train our models. A neural network uses [backpropagation](../glossary.html#backpropagation) to determine how each weight contributed to the loss. The basic loop is:
+---
 
-* Initialize the neural network with random weights and biases
-* Repeat:
-  * Calculate the loss function and its gradient
-  * Take a small step in the direction opposite to the gradient to decrease the loss by some amount
-* Now, you should have weights for a neural network that should fit the data well
+## A forward pass
 
+A [prediction](../glossary.html#prediction-inference) moves from left to right:
 
-In practice, there are many libraries (which we will look at later) that have efficiently implemented backpropagation.
+1. Normalize the 64 pixel values.
+2. Multiply inputs by the first layer's weights and add biases.
+3. Apply ReLU to produce hidden values.
+4. Combine the hidden values into ten output scores.
+5. Convert the scores into class probabilities.
+6. Choose the digit with the highest probability.
 
-![Backprop Figure](../res/alien17.png)
+This process is called a **forward pass**. It is used during both training and inference.
 
-### Potential problems
-One common problem is [overfitting](../glossary.html#overfitting-underfitting), because a flexible network can learn training examples too specifically. Validation data, a suitable architecture, regularization, and early stopping can help.
+---
 
-**Regularization**:
+## How the network learns {#backpropagation}
 
-To help reduce overfitting, we can add a regularization term to the error function. This can be the sum of the absolute values of the weights (without biases) multiplied by the regularization parameter (λ), or using the squares instead of absolute value.
+At first, the weights are not useful. Training repeats a short loop:
 
-![Regularization Figure](../res/alien18.png)
+1. **Predict:** run a batch of images through the network.
+2. **Measure error:** compare the predictions with the correct labels using a loss function.
+3. **Assign responsibility:** use [backpropagation](../glossary.html#backpropagation) to calculate how each weight contributed to the loss.
+4. **Update:** use gradient descent or an optimizer such as Adam to adjust the weights.
+5. **Repeat:** continue until validation performance stops improving or another stopping rule is reached.
 
-**Dropout**:
+Backpropagation does not train the model by itself. It supplies gradients. The optimizer uses those gradients to update the parameters.
 
-This technique makes sure that everything is trained equally, not introducing more bias to the model. For example, you could create a workout regiment where you flip 2 coins before working out - if the left coin is heads, you tie your left arm behind you back, and the same for the right coin. Some days you would be working out both arms, some days one arm, and others none. However, the randomness of the coin as the sample grows (days) would ensure that you are training each arm equally.
+### What changes during training?
 
-This is done in the neural network with training the weights. The dropout algorithm removes some of the nodes randomly at each epoch, which forces the rest of the nodes to train in their place. Dropout has been proven to have a positive effect on reducing overfitting.
+- **Learned parameters:** weights and biases.
+- **Chosen hyperparameters:** hidden-layer size, learning rate, regularization strength, batch size, and training limit.
+- **Unchanged evidence:** the held-out test set, which is used only for final evaluation.
 
-![Dropout Figure](../res/alien19.png)
+---
 
-## Try it
+## Evaluation: inspect the mistakes
 
-Draw a tiny network with two input features, two hidden units, and one output. Label the weights, biases, and activation functions. Then trace where an error signal must travel during training.
+Accuracy is a useful summary, but it does not explain which digits are being confused.
+
+A confusion matrix answers questions such as:
+
+- Does the model often confuse `3` with `8`?
+- Is one digit much harder than the others?
+- Are most errors reasonable on ambiguous handwriting?
+
+The images behind those errors matter too. Looking at misclassified examples can reveal faint strokes, unusual writing styles, preprocessing problems, or genuine ambiguity.
+
+This habit transfers directly to later projects: do not stop at one metric. Inspect representative errors.
+
+---
+
+## Overfitting
+
+A flexible network can memorize details of its training images instead of learning patterns that generalize. Signs include training performance improving while validation performance stalls or gets worse.
+
+Common responses include:
+
+- Use a separate validation set or early stopping.
+- Reduce the number of hidden units or layers.
+- Add L2 regularization.
+- Collect more representative data.
+- Inspect whether train and test data come from the same process.
+
+Dropout is another option in larger neural-network libraries. It randomly disables some hidden units during training, which can reduce reliance on any single path through the network.
+
+---
+
+## Small activity
+
+Choose one handwritten digit and answer:
+
+1. Which parts of the image would help a person recognize it?
+2. Which other digit might be confused with it?
+3. Why would inspecting only accuracy hide that confusion?
+
+Then sketch this architecture and label each part:
+
+```text
+64 pixel inputs → 32 ReLU hidden units → 10 digit outputs
+```
 
 ## Quick self-check
 
-1. What three operations turn a perceptron's inputs into an output?
-2. Why do activation functions matter between layers?
-3. What information does backpropagation provide to gradient descent?
+1. Why does an 8×8 image become 64 input features?
+2. What does a hidden unit do with its inputs?
+3. Why is a nonlinear activation needed between layers?
+4. What information does backpropagation provide to the optimizer?
+5. What can a confusion matrix show that accuracy cannot?
 
 Use [Knowledge Checks](../assessments/checkpoints.html) for answer guidance.
 
 ## Optional Depth
 
-The following are useful but optional for first completion of the intro path:
-- Detailed regularization variants (L1 vs L2 tradeoffs)
-- Activation function derivative behavior in deep stacks
-- Hyperparameter interactions at scale (batching, architecture depth, dropout tuning)
+These ideas are useful after the core path is clear.
 
-### Activation Functions
+### Activation functions {#activation-functions}
 
-We learned about certain activation functions, such as the step function for discrete perceptrons and the sigmoid activation function for continuous perceptrons. However, the sigmoid function has very flat derivatives on the ends, meaning that when we take its output and plug it into nodes in the next layer, the steps will be very small. Having a non-flat derivative helps with backpropagation. Instead, we can use other activation functions, such as the hyperbolic tangent (tanh) and Rectified linear unit (ReLU). Tanh has a similar shape to sigmoid, but is less flat at the edges. ReLU is another activation function, and it is very simple: if the input is negative, the output is 0. If the input is positive, the output is equal to the input. This means the derivative is 1 when the input is positive, giving us a good step over the sigmoid and tanh functions. In neural networks, we can combine these functions throughout our architechture. Most commonly, ReLU will be used for all nodes except for the last one, which will use sigmoid.
+Sigmoid and tanh can saturate at very positive or negative inputs, producing small gradients. ReLU is computationally simple and often keeps useful gradients for positive inputs. No activation is universally best; the task, architecture, and output type matter.
 
-![Activation Functions](../res/alien20.png)
+![Sigmoid, tanh, and ReLU activation functions](../res/alien20.png)
 
-### Multiple Outputs
-Some neural networks will have more than one output. To get a definite output, we can use the softmax function, which takes in the outputs and calculates the most probable of the outputs. For example, if we have an image classifiers that checks to see if an image is a bird, dog, or cat, the softmax function would generate probabilites based on the outputs for each type (bird, dog, and cat). The highest probability would then be considered the output or classification.
+### Regularization
 
-### Hyperparameters
-Neural Networks use many hyperparameters that we can fine-tune to get them to work better. They determine many attributes about our training such as depth, length, and input method. Here are some of the most important hyperparameters:
+L2 regularization adds a penalty for large weights to the loss. In scikit-learn's `MLPClassifier`, the `alpha` parameter controls this penalty. Regularization can help, but it does not replace a representative validation strategy.
 
-* **Learning Rate**: the size of the step we use during training
-* **Number of epochs**: the number of steps we use for our training
-* **Batch vs. mini-batch vs. stochastic gradient descent**: how many points at a time enter the training process - do we enter points one by one, or in batches, or all at the same time?
-* **Architecture**:
-  * Number of layers in the neural network
-  * Number of nodes per layer
-  * Activation functions used in each node
-* **Regularization Parameters**:
-  * L1 or L2 (absolute value or squared)
-  * The regularization term *λ*
-* **Dropout probability**: *p*
+### Architecture and hyperparameters
+
+Important choices include:
+
+- Number of hidden layers.
+- Number of units in each hidden layer.
+- Activation function.
+- Learning rate and optimizer.
+- Batch size and training duration.
+- Regularization strength.
+
+Start with a small network and a baseline. Add complexity only when evaluation evidence supports it.
+
+### What comes after a fully connected network?
+
+Flattening an image into 64 independent features discards the explicit two-dimensional layout. Convolutional neural networks preserve more spatial structure and are often better suited to larger image tasks. The input, training, and evaluation ideas from this lesson still apply.
+
+## References
+
+- [scikit-learn digits dataset](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.load_digits.html)
+- [scikit-learn MLPClassifier](https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPClassifier.html)
+- [scikit-learn ConfusionMatrixDisplay](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.ConfusionMatrixDisplay.html)
 
 ## Next step
 
-Apply the ideas in the [Artificial Neural Network practice project](../minis/ann.html).
+Train and inspect the [Handwritten Digit Classifier](../minis/ann.html).

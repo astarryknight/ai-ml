@@ -1,364 +1,328 @@
 ---
 layout: post
-title:  Artificial Neural Network
+title: Handwritten Digit Classifier
 parent: Practice
 nav_order: 3
-estimated_time: 2-3 hours
+estimated_time: 90-120 minutes
 prereqs:
   - Artificial Neural Networks theory lesson
   - Basic Python and NumPy
 outcomes:
-  - Train a nonlinear PyTorch MLP for binary classification
-  - Visualize the dataset, training curves, and final decision boundaries
-  - Compare nonlinear and linear models on the same dataset
+  - Train a small neural network for multiclass image classification
+  - Compare it with a linear baseline
+  - Use a confusion matrix and misclassified images for error analysis
 difficulty: Intermediate
 ---
 
-# Artificial Neural Network
+# Handwritten Digit Classifier
 
-Train the nonlinear MLP first, then compare it with a linear model on the same data.
+Train a small neural network to recognize handwritten digits, compare it with a linear baseline, and inspect the images it gets wrong.
+
+For the guided Week 6 version, [open the notebook in Colab](https://colab.research.google.com/github/astarryknight/ai-ml/blob/main/notebooks/week-06-digit-classifier.ipynb) or [download it](../../notebooks/week-06-digit-classifier.ipynb). This page is the extended walkthrough.
 
 If you have not completed the concept lesson, start with [Artificial Neural Networks](../theory/ann.html).
 
 ## Goal
-Train a small nonlinear neural network in PyTorch, inspect its training metrics, and then compare it to a linear baseline.
 
-### Why this dataset?
-We use `sklearn.datasets.make_moons` because it is perfect for visual intuition:
-- You can plot every point directly.
-- It clearly shows why nonlinear models can outperform linear ones.
+Use the same workflow you already know:
+
+1. Prepare the data.
+2. Build a baseline.
+3. Train the neural network.
+4. Evaluate both models.
+5. Inspect errors.
+
+The neural-network code is deliberately short. The important work is understanding the data and interpreting the result.
+
+## Why this dataset?
+
+The scikit-learn digits dataset is a practical bridge into image classification:
+
+- It is included with scikit-learn, so there is no separate download.
+- Every example is a visible 8×8 image.
+- Each image becomes 64 numeric pixel features.
+- Ten output classes make the task realistic without requiring a large computer.
 
 ## Before you start
 
-This project assumes basic Python and NumPy plus the neural-network concept lesson. Run it in Google Colab or local Python.
-
-### Setup
-Run in Google Colab (or local Python):
-
-```python
-!pip -q install torch scikit-learn matplotlib
-```
+Run this activity in Google Colab or local Python. Colab already includes the required libraries in most sessions.
 
 ```python
 import numpy as np
 import matplotlib.pyplot as plt
-import torch
-import torch.nn as nn
-import torch.optim as optim
 
-from sklearn.datasets import make_moons
+from sklearn.datasets import load_digits
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import ConfusionMatrixDisplay, accuracy_score
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-
+from sklearn.neural_network import MLPClassifier
 ```
 
 ---
 
-## Phase 1: Prepare the data
+## Phase 1: Prepare and inspect the images
 
-This section prepares the data so the network can learn from it cleanly:
-- `make_moons(...)` creates a two-class dataset with a curved shape, which is useful because a straight line will struggle to separate it.
-- `train_test_split(...)` holds out part of the data for testing, so we can measure whether the model generalizes beyond the examples it trained on.
-- `StandardScaler()` rescales each feature so values are centered near `0` with similar spread. Neural networks usually train more smoothly when inputs are on a comparable scale.
-- `torch.tensor(...)` converts NumPy arrays into PyTorch tensors, which are the objects the neural network and optimizer expect.
+Load the data and look at a few examples before training anything.
 
 ```python
-# Reproducibility
-np.random.seed(42)
-torch.manual_seed(42)
+digits = load_digits()
 
-# Nonlinear, visually rich dataset
-X, y = make_moons(n_samples=800, noise=0.22, random_state=42)
+images = digits.images
+X = digits.data / 16.0
+y = digits.target
 
-# Train/test split
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.25, random_state=42, stratify=y
-)
-
-# Feature scaling
-scaler = StandardScaler()
-X_train = scaler.fit_transform(X_train)
-X_test = scaler.transform(X_test)
-
-# Torch tensors
-X_train_t = torch.tensor(X_train, dtype=torch.float32)
-y_train_t = torch.tensor(y_train.reshape(-1, 1), dtype=torch.float32)
-X_test_t = torch.tensor(X_test, dtype=torch.float32)
-y_test_t = torch.tensor(y_test.reshape(-1, 1), dtype=torch.float32)
-
-plt.figure(figsize=(6, 5))
-plt.scatter(X_train[:, 0], X_train[:, 1], c=y_train, cmap='coolwarm', alpha=0.75)
-plt.title("Training Data: Two Moons")
-plt.xlabel("x1")
-plt.ylabel("x2")
-plt.show()
+print("Image array:", images.shape)
+print("Feature matrix:", X.shape)
+print("Labels:", y.shape)
 ```
 
 Code walkthrough:
-- `np.random.seed(42)` and `torch.manual_seed(42)` fix the random number generators so you and another learner can reproduce nearly the same dataset and training run.
-- `X` stores the input points and `y` stores the labels `0` or `1`.
-- `stratify=y` keeps the class balance similar in both the training set and the test set.
-- `y.reshape(-1, 1)` changes labels from a 1D list like `[0, 1, 1, ...]` into a column shape that matches the model output.
-- The scatter plot gives a visual answer to: "What pattern is the model trying to learn?"
 
----
+- `images` has shape `(1797, 8, 8)`, so it keeps each image's rows and columns.
+- `X` has shape `(1797, 64)`, so each image is flattened into one row of model inputs.
+- Pixel values originally range from `0` to `16`. Dividing by `16.0` puts them between `0` and `1`.
+- `y` contains the correct digit for each image.
 
-## Phase 2: Build the model
-
-We will start with a tiny MLP:
-- 2 inputs (`x1`, `x2`)
-- 1 hidden layer with 4 neurons + ReLU
-- 1 output neuron + sigmoid
-
-Conceptually, the model works in two steps:
-- The first layer mixes the two input features into four hidden values.
-- The ReLU activation lets the model create nonlinear shapes instead of only straight-line boundaries.
-- The second layer combines those hidden values into one score.
-- The sigmoid squashes that score into a probability between `0` and `1`.
+### View the data
 
 ```python
-class TinyMLP(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.fc1 = nn.Linear(2, 4)
-        self.fc2 = nn.Linear(4, 1)
+fig, axes = plt.subplots(2, 6, figsize=(10, 4))
 
-    def forward(self, x):
-        h = torch.relu(self.fc1(x))
-        out = torch.sigmoid(self.fc2(h))
-        return out
+for ax, image, label in zip(axes.ravel(), images[:12], y[:12]):
+    ax.imshow(image, cmap="gray_r")
+    ax.set_title(f"Label: {label}")
+    ax.axis("off")
 
-
-criterion = nn.BCELoss()
-model = TinyMLP()
-optimizer = optim.Adam(model.parameters(), lr=0.01)
-```
-
-Code walkthrough:
-- `nn.Linear(2, 4)` means "take 2 input numbers and produce 4 learned combinations of them."
-- `torch.relu(...)` replaces negative values with `0`, which gives the network extra flexibility.
-- `nn.Linear(4, 1)` reduces the hidden representation down to one output value for binary classification.
-- `nn.BCELoss()` is binary cross-entropy loss, which penalizes confident wrong probabilities more heavily than small mistakes.
-- `optim.Adam(...)` is the training algorithm that updates the weights a little each step based on the gradients.
-
----
-
-## Phase 3: Train and track metrics
-
-We record:
-- train/test loss
-- train/test accuracy
-
-The training loop repeats the same pattern:
-1. Make predictions on the training data.
-2. Measure how wrong those predictions are.
-3. Backpropagate to compute gradients.
-4. Update the weights.
-5. Measure loss and accuracy so we can see whether learning is improving over time.
-
-```python
-def evaluate(model, X_t, y_t, criterion):
-    model.eval()
-    with torch.no_grad():
-        probs = model(X_t)
-        preds = (probs >= 0.5).float()
-        loss = criterion(probs, y_t).item()
-        acc = preds.eq(y_t).float().mean().item()
-    return loss, acc
-
-
-num_epochs = 250
-history = {
-    "train_loss": [],
-    "train_acc": [],
-    "test_loss": [],
-    "test_acc": []
-}
-
-for epoch in range(num_epochs):
-    model.train()
-    optimizer.zero_grad()
-
-    probs = model(X_train_t)
-    loss = criterion(probs, y_train_t)
-    loss.backward()
-    optimizer.step()
-
-    tr_loss, tr_acc = evaluate(model, X_train_t, y_train_t, criterion)
-    te_loss, te_acc = evaluate(model, X_test_t, y_test_t, criterion)
-
-    history["train_loss"].append(tr_loss)
-    history["train_acc"].append(tr_acc)
-    history["test_loss"].append(te_loss)
-    history["test_acc"].append(te_acc)
-
-print(f"Final MLP test accuracy: {history['test_acc'][-1]:.3f}")
-```
-
-Code walkthrough:
-- `model.train()` turns on training behavior; `model.eval()` switches to evaluation behavior. This matters more in larger models with layers like dropout, but it is still good practice here.
-- `optimizer.zero_grad()` clears gradients from the previous step. Without this, PyTorch would add new gradients on top of old ones.
-- `loss.backward()` computes how each parameter contributed to the error.
-- `optimizer.step()` uses those gradients to update the weights.
-- `probs >= 0.5` converts predicted probabilities into class labels.
-- `history` stores the metrics from every epoch so the next section can plot the learning curves.
-
----
-
-## Phase 4: Inspect training curves
-
-```python
-fig, ax = plt.subplots(1, 2, figsize=(12, 4))
-
-ax[0].plot(history["train_loss"], label="Train")
-ax[0].plot(history["test_loss"], label="Test")
-ax[0].set_title("Loss vs Epoch")
-ax[0].set_xlabel("Epoch")
-ax[0].set_ylabel("BCE Loss")
-ax[0].legend()
-
-ax[1].plot(history["train_acc"], label="Train")
-ax[1].plot(history["test_acc"], label="Test")
-ax[1].set_title("Accuracy vs Epoch")
-ax[1].set_xlabel("Epoch")
-ax[1].set_ylabel("Accuracy")
-ax[1].legend()
-
-plt.show()
-```
-
----
-
-### Inspect the final MLP decision boundary
-
-```python
-# Grid for boundary plots
-x_min, x_max = X_train[:, 0].min() - 1.0, X_train[:, 0].max() + 1.0
-y_min, y_max = X_train[:, 1].min() - 1.0, X_train[:, 1].max() + 1.0
-xx, yy = np.meshgrid(np.linspace(x_min, x_max, 220), np.linspace(y_min, y_max, 220))
-grid = np.c_[xx.ravel(), yy.ravel()]
-grid_t = torch.tensor(grid, dtype=torch.float32)
-
-with torch.no_grad():
-    p_mlp = model(grid_t).numpy().reshape(xx.shape)
-
-plt.figure(figsize=(7, 6))
-plt.contourf(xx, yy, p_mlp, levels=25, cmap="coolwarm", alpha=0.35)
-plt.contour(xx, yy, p_mlp, levels=[0.5], colors="black", linewidths=2)
-plt.scatter(X_train[:, 0], X_train[:, 1], c=y_train, cmap="coolwarm", edgecolors="k", s=25)
-plt.title(f"Final MLP Decision Boundary | test acc={history['test_acc'][-1]:.3f}")
-plt.xlabel("x1")
-plt.ylabel("x2")
-plt.show()
-```
-
----
-
-## Phase 5: Compare the linear and nonlinear models
-
-Now use a linear baseline and compare it to the already-trained MLP.
-
-```python
-class LinearBinaryNN(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.linear = nn.Linear(2, 1)
-
-    def forward(self, x):
-        return torch.sigmoid(self.linear(x))
-
-
-def train_binary_model(model, X_train_t, y_train_t, X_test_t, y_test_t, lr=0.01, epochs=250):
-    criterion = nn.BCELoss()
-    optimizer = optim.Adam(model.parameters(), lr=lr)
-    history_local = {"test_loss": [], "test_acc": []}
-
-    for _ in range(epochs):
-        model.train()
-        optimizer.zero_grad()
-        probs = model(X_train_t)
-        loss = criterion(probs, y_train_t)
-        loss.backward()
-        optimizer.step()
-
-        model.eval()
-        with torch.no_grad():
-            te_probs = model(X_test_t)
-            te_preds = (te_probs >= 0.5).float()
-            history_local["test_loss"].append(criterion(te_probs, y_test_t).item())
-            history_local["test_acc"].append(te_preds.eq(y_test_t).float().mean().item())
-
-    return history_local
-
-
-def predict_grid(model, xx, yy):
-    model.eval()
-    points = np.c_[xx.ravel(), yy.ravel()]
-    with torch.no_grad():
-        probs = model(torch.tensor(points, dtype=torch.float32)).numpy().reshape(xx.shape)
-    return probs
-
-
-# Train linear baseline
-torch.manual_seed(42)
-linear_model = LinearBinaryNN()
-linear_hist = train_binary_model(
-    linear_model,
-    X_train_t, y_train_t,
-    X_test_t, y_test_t,
-    lr=0.01,
-    epochs=num_epochs,
-)
-
-mlp_final_acc = history["test_acc"][-1]
-linear_final_acc = linear_hist["test_acc"][-1]
-
-print(f"MLP final test accuracy:    {mlp_final_acc:.3f}")
-print(f"Linear final test accuracy: {linear_final_acc:.3f}")
-```
-
-```python
-# Final boundary comparison
-p_mlp = predict_grid(model, xx, yy)
-p_linear = predict_grid(linear_model, xx, yy)
-
-fig, ax = plt.subplots(1, 2, figsize=(13, 5))
-
-ax[0].contourf(xx, yy, p_mlp, levels=25, cmap="coolwarm", alpha=0.35)
-ax[0].contour(xx, yy, p_mlp, levels=[0.5], colors="black", linewidths=2)
-ax[0].scatter(X_train[:, 0], X_train[:, 1], c=y_train, cmap="coolwarm", edgecolors='k', s=20)
-ax[0].set_title(f"Tiny MLP (2->4->1) | test acc={mlp_final_acc:.3f}")
-ax[0].set_xlabel("x1")
-ax[0].set_ylabel("x2")
-
-ax[1].contourf(xx, yy, p_linear, levels=25, cmap="coolwarm", alpha=0.35)
-ax[1].contour(xx, yy, p_linear, levels=[0.5], colors="black", linewidths=2)
-ax[1].scatter(X_train[:, 0], X_train[:, 1], c=y_train, cmap="coolwarm", edgecolors='k', s=20)
-ax[1].set_title(f"Linear Model (2->1) | test acc={linear_final_acc:.3f}")
-ax[1].set_xlabel("x1")
-ax[1].set_ylabel("x2")
-
-plt.suptitle("Nonlinear vs Linear: Decision Boundaries")
 plt.tight_layout()
 plt.show()
 ```
 
+Before continuing, answer: which pairs of digits might be difficult to distinguish?
+
+### Split the data
+
+```python
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.25,
+    random_state=42,
+    stratify=y,
+)
+
+print("Training examples:", len(X_train))
+print("Test examples:", len(X_test))
+```
+
+`stratify=y` keeps the proportion of each digit similar in the training and test sets.
+
 ---
 
-## Phase 6: Extend
-1. Change hidden width in the MLP (`4`, `8`, `16`) and compare boundaries.
-2. Increase moon noise (`0.05`, `0.22`, `0.35`) and compare MLP vs linear accuracy gaps.
-3. Try MLP learning rates (`0.001`, `0.01`, `0.05`) and describe one unstable run.
-4. Explain in 3-4 sentences why the nonlinear model fits this dataset better.
+## Phase 2: Build a linear baseline
+
+A baseline tells us whether the neural network actually improves the result.
+
+```python
+baseline = LogisticRegression(max_iter=2000, random_state=42)
+baseline.fit(X_train, y_train)
+
+baseline_predictions = baseline.predict(X_test)
+baseline_accuracy = accuracy_score(y_test, baseline_predictions)
+
+print(f"Linear baseline accuracy: {baseline_accuracy:.3f}")
+```
+
+Logistic regression creates a linear score for each class. It is a strong baseline for this small dataset, so the neural network should earn its added complexity.
+
+---
+
+## Phase 3: Train the neural network
+
+This model has one hidden layer with 32 units:
+
+```text
+64 pixel inputs → 32 ReLU hidden units → 10 digit outputs
+```
+
+```python
+mlp = MLPClassifier(
+    hidden_layer_sizes=(32,),
+    activation="relu",
+    solver="adam",
+    alpha=0.0001,
+    learning_rate_init=0.003,
+    max_iter=500,
+    n_iter_no_change=20,
+    random_state=42,
+)
+
+mlp.fit(X_train, y_train)
+
+mlp_predictions = mlp.predict(X_test)
+mlp_accuracy = accuracy_score(y_test, mlp_predictions)
+
+print(f"Neural-network accuracy: {mlp_accuracy:.3f}")
+print(f"Training epochs used: {mlp.n_iter_}")
+```
+
+Code walkthrough:
+
+- `hidden_layer_sizes=(32,)` creates one hidden layer containing 32 units.
+- `activation="relu"` adds nonlinearity inside that hidden layer.
+- `solver="adam"` updates the weights using gradients from backpropagation.
+- `learning_rate_init=0.003` controls the initial update size.
+- `n_iter_no_change=20` stops training after the loss has stopped improving for several epochs.
+- `random_state=42` makes the split and initial model behavior reproducible.
+
+The library performs the matrix operations and backpropagation. Your job is to choose a reasonable experiment and evaluate it honestly.
+
+---
+
+## Phase 4: Inspect learning
+
+`MLPClassifier` stores the loss after each training epoch.
+
+```python
+plt.figure(figsize=(7, 4))
+plt.plot(mlp.loss_curve_)
+plt.title("Neural-network training loss")
+plt.xlabel("Epoch")
+plt.ylabel("Loss")
+plt.show()
+```
+
+Look for the general trend rather than expecting a perfectly smooth curve. The test set remains untouched until evaluation.
+
+---
+
+## Phase 5: Compare the models
+
+```python
+print(f"Linear baseline: {baseline_accuracy:.3f}")
+print(f"Neural network:  {mlp_accuracy:.3f}")
+print(f"Difference:      {mlp_accuracy - baseline_accuracy:+.3f}")
+```
+
+Do not assume the neural network must win. On a small dataset, a simpler model may already perform very well. The comparison is useful either way.
+
+Write down:
+
+1. Which model performed better on the test set?
+2. Was the difference large enough to matter?
+3. What extra cost or complexity does the neural network introduce?
+
+---
+
+## Phase 6: Use a confusion matrix
+
+```python
+ConfusionMatrixDisplay.from_predictions(
+    y_test,
+    mlp_predictions,
+    cmap="Blues",
+    colorbar=False,
+)
+plt.title("Neural-network confusion matrix")
+plt.show()
+```
+
+Rows are the correct digits and columns are the predicted digits. Values away from the diagonal are mistakes.
+
+Find the most common confusion:
+
+```python
+mistake_counts = np.zeros((10, 10), dtype=int)
+
+for actual, predicted in zip(y_test, mlp_predictions):
+    if actual != predicted:
+        mistake_counts[actual, predicted] += 1
+
+actual_digit, predicted_digit = np.unravel_index(
+    np.argmax(mistake_counts),
+    mistake_counts.shape,
+)
+
+print(
+    f"Most common confusion: {actual_digit} predicted as {predicted_digit} "
+    f"({mistake_counts[actual_digit, predicted_digit]} times)"
+)
+```
+
+---
+
+## Phase 7: Look at misclassified images
+
+Metrics summarize errors. Images help explain them.
+
+```python
+wrong = np.flatnonzero(mlp_predictions != y_test)
+count = min(12, len(wrong))
+
+fig, axes = plt.subplots(2, 6, figsize=(11, 4))
+
+for ax in axes.ravel():
+    ax.axis("off")
+
+for ax, test_index in zip(axes.ravel(), wrong[:count]):
+    ax.imshow(X_test[test_index].reshape(8, 8), cmap="gray_r")
+    ax.set_title(
+        f"True: {y_test[test_index]}\nPred: {mlp_predictions[test_index]}"
+    )
+    ax.axis("off")
+
+plt.tight_layout()
+plt.show()
+```
+
+Choose two mistakes and describe what might have made them difficult. Avoid claiming that you know exactly what an individual hidden unit learned unless you test that claim.
+
+---
+
+## Phase 8: Extend the experiment
+
+Change one thing at a time and record the result.
+
+1. Try hidden-layer sizes `(16,)`, `(32,)`, and `(64,)`.
+2. Try two hidden layers with `(32, 16)`.
+3. Try regularization values `alpha=0.0001`, `0.01`, and `0.1`.
+4. Turn on `early_stopping=True` and compare the number of epochs and test accuracy.
+5. Inspect whether the same digit pairs remain difficult.
+
+Use a small results table:
+
+| Hidden layers | Alpha | Epochs | Test accuracy | Most common confusion |
+| --- | ---: | ---: | ---: | --- |
+| `(32,)` | `0.0001` |  |  |  |
 
 ## Validate
-- MLP training runs end-to-end and reports test accuracy.
-- Dataset plot renders correctly.
-- Loss and accuracy curves render correctly.
-- Final MLP and side-by-side comparison plots render correctly.
+
+- The sample digit grid renders.
+- The baseline and neural network both report test accuracy.
+- The training-loss plot renders.
+- The confusion matrix renders.
+- Misclassified images show both the correct and predicted labels.
+- Your extension changes only one main setting at a time.
 
 ## Finish line
-- Notebook with all cells executed.
-- One screenshot of the final MLP decision boundary.
-- One screenshot of the final linear vs MLP boundary comparison.
-- One short paragraph interpreting the comparison.
+
+- One executed notebook containing the full workflow.
+- The baseline and neural-network test accuracies.
+- One confusion matrix.
+- At least two inspected mistakes.
+- A short conclusion explaining whether the neural network was worth the added complexity.
+
+## Optional PyTorch connection
+
+The scikit-learn model hides the training loop, but its architecture maps directly to a small PyTorch model:
+
+```python
+import torch.nn as nn
+
+model = nn.Sequential(
+    nn.Linear(64, 32),
+    nn.ReLU(),
+    nn.Linear(32, 10),
+)
+```
+
+The same inputs, hidden layer, activations, outputs, loss, backpropagation, and evaluation ideas still apply. Use PyTorch when you need more control over the architecture or training process.

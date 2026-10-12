@@ -105,9 +105,10 @@ These are short self-checks, not graded assignments. Try to answer each question
 
 ### Neural networks
 
-1. What does a layer do?
-2. Why are nonlinear activation functions useful?
-3. What is the validation set used for?
+1. Why does an 8×8 digit image become 64 model inputs?
+2. Why are nonlinear activation functions useful between layers?
+3. What does backpropagation provide to the optimizer?
+4. What can a confusion matrix reveal that accuracy alone cannot?
 
 ### Planning your own project
 
