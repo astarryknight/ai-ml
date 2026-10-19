@@ -22,8 +22,8 @@ Recommended sequence:
 2. [Optimization & Gradient Descent](./grad_desc.html) - loss and parameter updates
 3. [Evaluation Basics](./evaluation.html) - metrics, splits, and leakage
 4. [Feature Engineering Basics](./feature_engineering.html) - preprocessing and generalization
-5. [Artificial Neural Networks](./ann.html) - layers, activations, and training intuition
-6. [Reinforcement Learning](./rl.html) - extension topic for Week 7
+5. [Artificial Neural Networks](./ann.html) - layers, activations, and training intuition for Week 6
+6. [Reinforcement Learning](./rl.html) - optional study of agents, rewards, and policies
 
 ## Optional extensions
 

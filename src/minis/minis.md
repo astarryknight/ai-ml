@@ -22,7 +22,7 @@ Each project should produce a runnable notebook or demo, one plot or table, and 
 3. Week 3: [Classification and Error Tradeoffs](https://colab.research.google.com/github/astarryknight/ai-ml/blob/main/notebooks/week-03-classification-errors.ipynb) ([download](../../notebooks/week-03-classification-errors.ipynb))
 4. Week 4: [Reliable Data and Pipelines](https://colab.research.google.com/github/astarryknight/ai-ml/blob/main/notebooks/week-04-data-pipeline.ipynb) ([download](../../notebooks/week-04-data-pipeline.ipynb))
 5. Week 5: [Song Recommendations with Similarity](https://colab.research.google.com/github/astarryknight/ai-ml/blob/main/notebooks/week-05-song-recommender.ipynb) ([download](../../notebooks/week-05-song-recommender.ipynb)); continue to the [extended Spotify project](./spotify.html) if you want a larger dataset
-6. Week 6: [Neural Networks and Handwritten Digits](https://colab.research.google.com/github/astarryknight/ai-ml/blob/main/notebooks/week-06-digit-classifier.ipynb) ([download](../../notebooks/week-06-digit-classifier.ipynb)); use the [extended walkthrough](./ann.html) for more support
+6. Week 6: [Neural Networks for Loan Approval](https://colab.research.google.com/github/astarryknight/ai-ml/blob/main/notebooks/week-05-neural-networks.ipynb#scrollTo=9B0RhfLMXpdM) ([download](../../notebooks/week-05-neural-networks.ipynb)); learn how financial inputs become a practical approval prediction
 
 ## Extension projects
 
