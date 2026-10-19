@@ -23,11 +23,12 @@ Recommended sequence:
 3. [Evaluation Basics](./evaluation.html) - metrics, splits, and leakage
 4. [Feature Engineering Basics](./feature_engineering.html) - preprocessing and generalization
 5. [Artificial Neural Networks](./ann.html) - layers, activations, and training intuition for Week 5
-6. [Reinforcement Learning](./rl.html) - agents, rewards, and policies for Week 6; AI agents content is TBD
+6. **AI Agents** - content TBD for Week 6
 
 ## Optional extensions
 
 - [Natural Language Processing](./nlp.html)
+- [Reinforcement Learning](./rl.html)
 - [Deep Reads](../deep_reads/deep_reads.html)
 
 Use the [weekly guide on the homepage](../../index.html#catch-up-by-week) when you need to match a lesson to an in-person session. Open [Practice](../minis/minis.html) when you are ready to apply an idea.

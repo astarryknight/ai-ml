@@ -22,7 +22,7 @@ Each project should produce a runnable notebook or demo, one plot or table, and 
 3. Week 3: [Classification and Error Tradeoffs](https://colab.research.google.com/github/astarryknight/ai-ml/blob/main/notebooks/week-03-classification-errors.ipynb) ([download](../../notebooks/week-03-classification-errors.ipynb))
 4. Week 4: [Reliable Data and Pipelines](https://colab.research.google.com/github/astarryknight/ai-ml/blob/main/notebooks/week-04-data-pipeline.ipynb) ([download](../../notebooks/week-04-data-pipeline.ipynb))
 5. Week 5: [Neural Networks for Loan Approval](https://colab.research.google.com/github/astarryknight/ai-ml/blob/main/notebooks/week-05-neural-networks.ipynb#scrollTo=9B0RhfLMXpdM) ([download](../../notebooks/week-05-neural-networks.ipynb)); learn how financial inputs become a practical approval prediction
-6. Week 6: complete the small activity in the [Reinforcement Learning lesson](../theory/rl.html#try-it), then try the [extended Snake with RL project](./rl.html) if you want a larger challenge. AI agents content is TBD.
+6. Week 6: **AI Agents** — content TBD; practice materials will be added here.
 
 ## Extension projects
 
