@@ -180,32 +180,6 @@ One limitation:
 Week 9 adaptation:
 ```
 
-## Week 8 session plan
-
-### 0–12 minutes: Demo gallery
-
-Show the visible result from each reference project. Spend no more than three minutes on each: question, data, output, and one limitation.
-
-### 12–20 minutes: Choose a track
-
-Choose based on the type of data and output you want. Learners without a preference begin with bike demand.
-
-### 20–45 minutes: Reproduce the reference
-
-Run the notebook from top to bottom. After each stage, write one sentence explaining what happened and why the decision matters.
-
-### 45–70 minutes: Inspect the decisions
-
-In track groups, identify the target or output, possible leakage, split strategy, preprocessing, baseline, main metric, and most important error.
-
-### 70–85 minutes: Find and map a new dataset
-
-Find a different dataset in the same track. Identify its target or output, possible leakage, split, preprocessing, baseline, and metric. The reference notebook is the scaffold for the next session.
-
-### Final 5 minutes: Exit artifact
-
-Show your chosen track, the reference result you reproduced, and the new dataset you selected. Explain one pipeline decision that must change.
-
 ## What happens next
 
 - **Week 9:** Adapt the reference to a new question or dataset, evaluate it, and make one evidence-based iteration.
