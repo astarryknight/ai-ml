@@ -93,22 +93,23 @@ Important decisions:
 
 Your project: choose a different item dataset—such as movies, books, recipes, games, products, or courses—and define what similarity should mean for it.
 
-## Track 3: Classify disaster tweets
+## Track 3: Build an SMS spam filter
 
-**Question:** Is a tweet describing a real disaster?
+**Question:** Should an incoming text message be treated as spam?
 
-This track uses the public [Disaster Tweets dataset](https://www.kaggle.com/datasets/vstepanenko/disaster-tweets). The dataset contains more than 11,000 labeled tweets and may include profanity, offensive language, or descriptions of emergencies.
+This track uses the public [SMS Spam Collection](https://www.kaggle.com/datasets/uciml/sms-spam-collection-dataset), a compact dataset of approximately 5,500 English messages labeled as legitimate (`ham`) or spam. The messages come from older UK and Singaporean sources, so the notebook treats this as a useful teaching dataset rather than a complete picture of modern scams.
 
 Important decisions:
 
 - use a stratified split so both labels appear in similar proportions;
 - begin with TF-IDF bigrams so the text features remain inspectable;
 - compare with a most-frequent-class baseline;
-- use F1, precision, recall, a confusion matrix, and misclassified examples;
-- test decision thresholds rather than assuming `0.50` is always best.
+- use class weighting because spam is the less common label;
+- compare spam precision and recall because blocking a real message and missing spam have different costs;
+- test custom messages and decision thresholds rather than assuming `0.50` is always best.
 
-<a class="material-action material-action--primary" href="https://colab.research.google.com/github/astarryknight/ai-ml/blob/main/notebooks/week-08-final-project-tracks/track-3-disaster-tweets.ipynb">Open Track 3 in Colab <span aria-hidden="true">↗</span></a>
-<a class="material-action" href="../notebooks/week-08-final-project-tracks/track-3-disaster-tweets.ipynb" download>Download notebook <span aria-hidden="true">↓</span></a>
+<a class="material-action material-action--primary" href="https://colab.research.google.com/github/astarryknight/ai-ml/blob/main/notebooks/week-08-final-project-tracks/track-3-sms-spam.ipynb">Open Track 3 in Colab <span aria-hidden="true">↗</span></a>
+<a class="material-action" href="../notebooks/week-08-final-project-tracks/track-3-sms-spam.ipynb" download>Download notebook <span aria-hidden="true">↓</span></a>
 
 ### Are we using an RNN?
 
@@ -116,7 +117,7 @@ Not for the required path. The core example uses **TF-IDF plus logistic regressi
 
 The notebook includes a small bidirectional LSTM/RNN as an optional Colab experiment. It uses the same split and F1 metric so students can test whether the added tokenization, sequence length, embedding, and training time actually improve the result. Complexity is not automatically an upgrade.
 
-Your project: choose a different labeled-text dataset—such as reviews, support tickets, headlines, messages, comments, or article categories—and rebuild the pipeline around its error tradeoffs.
+Your project: choose a different labeled-text dataset—such as reviews, support tickets, headlines, comments, or article categories—and rebuild the pipeline around its error tradeoffs.
 
 ## Track 4: Recognize natural scenes
 

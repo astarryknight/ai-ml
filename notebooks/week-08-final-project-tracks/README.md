@@ -4,7 +4,7 @@ Each notebook is a **completed reference example**, not a final project to submi
 
 1. `track-1-bike-demand.ipynb` — chronological tabular regression
 2. `track-2-spotify-recommender.ipynb` — scaled nearest-neighbor recommendations
-3. `track-3-disaster-tweets.ipynb` — TF-IDF classification with an optional RNN comparison
+3. `track-3-sms-spam.ipynb` — SMS spam classification with TF-IDF and an optional RNN comparison
 4. `track-4-scene-classifier.ipynb` — image transfer learning with MobileNetV2
 
 All four use the same workflow: frame, acquire, inspect, split, prepare, baseline, model, evaluate, adapt, and share.
