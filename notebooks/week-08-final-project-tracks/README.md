@@ -1,6 +1,6 @@
 # Week 8 Final Project Tracks
 
-Each notebook begins with a complete reference project using a public Kaggle dataset and ends with an adaptation prompt.
+Each notebook is a **completed reference example**, not a final project to submit unchanged. Students should use the examples to choose a track and learn its workflow, then select a different dataset and adapt the target or output, preprocessing, split, evaluation, and explanation.
 
 1. `track-1-bike-demand.ipynb` — chronological tabular regression
 2. `track-2-spotify-recommender.ipynb` — scaled nearest-neighbor recommendations

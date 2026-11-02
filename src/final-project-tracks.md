@@ -14,7 +14,10 @@ outcomes:
 
 # Week 8: Start a final project from a working example
 
-You do not need to invent a project from nothing. Choose one track, run its complete reference notebook, understand the important decisions, and then change one part to make the project your own.
+You do not need to invent a workflow from nothing. Choose one track, run its complete reference notebook, understand the important decisions, and then reuse that structure with a dataset you choose.
+
+{: .important }
+> **The completed notebooks are examples, not final-project submissions.** Use them to choose a type of project and learn the pipeline. Your project should use a **different dataset**—ideally another public Kaggle dataset—and should update the target or output, features, preprocessing, evaluation, and explanation to match that data. Do not submit the reference notebook unchanged.
 
 ## Finish line for this week
 
@@ -22,9 +25,9 @@ By the end of Week 8, you should have:
 
 1. selected one track;
 2. run its reference notebook from beginning to end;
-3. explained the dataset, target or output, split, preprocessing, baseline, and metric;
-4. produced one visible result; and
-5. written down one adaptation to attempt in Week 9.
+3. selected a different dataset for your own project;
+4. explained how its target or output, split, preprocessing, baseline, and metric should change; and
+5. written down the first adaptation to implement in Week 9.
 
 If you are unsure, choose **Track 1: Predict bike demand**. It is the most direct continuation of the earlier course material.
 
@@ -39,7 +42,7 @@ If you are unsure, choose **Track 1: Predict bike demand**. It is the most direc
 
 ## The common project pattern
 
-Every notebook follows the same process. This is the part you should reuse with a different dataset later.
+Every notebook follows the same process. **The process is the reusable part; the example dataset is not.**
 
 1. **Frame:** Who uses the result, and what question does it support?
 2. **Acquire:** Download a public Kaggle dataset and record its source.
@@ -69,7 +72,7 @@ Important decisions:
 <a class="material-action material-action--primary" href="https://colab.research.google.com/github/astarryknight/ai-ml/blob/main/notebooks/week-08-final-project-tracks/track-1-bike-demand.ipynb">Open Track 1 in Colab <span aria-hidden="true">↗</span></a>
 <a class="material-action" href="../notebooks/week-08-final-project-tracks/track-1-bike-demand.ipynb" download>Download notebook <span aria-hidden="true">↓</span></a>
 
-Minimum adaptation: change the feature set, test period, model, or prediction interval and compare the result.
+Your project: find another time-based regression dataset—such as energy use, traffic, sales, weather, or attendance—and adapt the chronological pipeline to it.
 
 ## Track 2: Recommend similar songs
 
@@ -88,7 +91,7 @@ Important decisions:
 <a class="material-action material-action--primary" href="https://colab.research.google.com/github/astarryknight/ai-ml/blob/main/notebooks/week-08-final-project-tracks/track-2-spotify-recommender.ipynb">Open Track 2 in Colab <span aria-hidden="true">↗</span></a>
 <a class="material-action" href="../notebooks/week-08-final-project-tracks/track-2-spotify-recommender.ipynb" download>Download notebook <span aria-hidden="true">↓</span></a>
 
-Minimum adaptation: change the feature weights, filter by genre, or transfer the same approach to movies, books, recipes, games, or courses.
+Your project: choose a different item dataset—such as movies, books, recipes, games, products, or courses—and define what similarity should mean for it.
 
 ## Track 3: Classify disaster tweets
 
@@ -113,7 +116,7 @@ Not for the required path. The core example uses **TF-IDF plus logistic regressi
 
 The notebook includes a small bidirectional LSTM/RNN as an optional Colab experiment. It uses the same split and F1 metric so students can test whether the added tokenization, sequence length, embedding, and training time actually improve the result. Complexity is not automatically an upgrade.
 
-Minimum adaptation: change the text domain, add one metadata feature, adjust the threshold, or compare the optional RNN with the baseline.
+Your project: choose a different labeled-text dataset—such as reviews, support tickets, headlines, messages, comments, or article categories—and rebuild the pipeline around its error tradeoffs.
 
 ## Track 4: Recognize natural scenes
 
@@ -135,7 +138,23 @@ This is the intermediate track. A Colab GPU is recommended, and the Kaggle downl
 <a class="material-action material-action--primary" href="https://colab.research.google.com/github/astarryknight/ai-ml/blob/main/notebooks/week-08-final-project-tracks/track-4-scene-classifier.ipynb">Open Track 4 in Colab <span aria-hidden="true">↗</span></a>
 <a class="material-action" href="../notebooks/week-08-final-project-tracks/track-4-scene-classifier.ipynb" download>Download notebook <span aria-hidden="true">↓</span></a>
 
-Minimum adaptation: change the image classes, augmentation, number of trainable layers, or dataset.
+Your project: choose a different folder-based image dataset—such as plants, animals, food, waste, weather, or manufactured objects—and adapt the transfer-learning pipeline.
+
+## Move from the example to your dataset
+
+Before Week 9, complete this dataset-swap checklist:
+
+1. Find a public dataset that matches the track's data type.
+2. Record its source and license.
+3. Define what one row, text, item, or image represents.
+4. Name the new target or desired output.
+5. Identify information that would leak the answer or be unavailable in real use.
+6. Choose a split that matches how the project would actually be used.
+7. Decide which preprocessing steps still apply and which must change.
+8. Define a simple baseline and an appropriate metric.
+9. Update one visible output so it uses your data rather than the example data.
+
+The model may remain similar at first. The important work is making defensible data and evaluation decisions for the new dataset.
 
 ## Decision record
 
@@ -143,6 +162,8 @@ Copy this into your notebook or project README and complete it as you work:
 
 ```markdown
 Project track:
+Reference example used as a guide:
+My new dataset and source:
 Intended user:
 Prediction question or desired output:
 What one row or example represents:
@@ -177,13 +198,13 @@ Run the notebook from top to bottom. After each stage, write one sentence explai
 
 In track groups, identify the target or output, possible leakage, split strategy, preprocessing, baseline, main metric, and most important error.
 
-### 70–85 minutes: Make one change
+### 70–85 minutes: Find and map a new dataset
 
-Change one feature, preprocessing choice, model setting, threshold, or input example. Compare it with the original result.
+Find a different dataset in the same track. Identify its target or output, possible leakage, split, preprocessing, baseline, and metric. The reference notebook is the scaffold for the next session.
 
 ### Final 5 minutes: Exit artifact
 
-Show your chosen track, one visible result, baseline, main metric, one limitation, and the adaptation you will attempt next.
+Show your chosen track, the reference result you reproduced, and the new dataset you selected. Explain one pipeline decision that must change.
 
 ## What happens next
 

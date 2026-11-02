@@ -33,10 +33,10 @@ Avoid projects that require collecting private data, training a large model from
 ### Week 8 · Milestone 1: Choose, reproduce, and scope {#milestone-1}
 
 - Choose one [final-project track](./final-project-tracks.html).
-- Run its reference notebook from beginning to end.
-- Explain the intended user, data source, target or output, split, preprocessing, baseline, metric, and one limitation.
-- Produce one visible result from the reference project.
-- Write down one adaptation you will make in Week 9.
+- Run its completed reference notebook from beginning to end as an example.
+- Choose a different dataset for your own project; do not submit the reference notebook unchanged.
+- Explain the intended user, new data source, target or output, split, preprocessing, baseline, metric, and one limitation.
+- Map the example pipeline to the new dataset and identify what must change in Week 9.
 
 ### Week 9 · Milestone 2: Adapt, evaluate, and iterate {#milestone-2}
 
