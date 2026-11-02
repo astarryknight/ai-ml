@@ -30,29 +30,32 @@ Avoid projects that require collecting private data, training a large model from
 
 ## Milestones
 
-### Milestone 1: Problem and baseline {#milestone-1}
+### Week 8 · Milestone 1: Choose, reproduce, and scope {#milestone-1}
 
-- One-sentence problem statement.
-- Intended user or audience.
-- Data source and data-quality notes.
-- Success metric and why it fits the task.
-- Simple baseline model, rule, or prompt workflow.
-- One-page project brief.
+- Choose one [final-project track](./final-project-tracks.html).
+- Run its reference notebook from beginning to end.
+- Explain the intended user, data source, target or output, split, preprocessing, baseline, metric, and one limitation.
+- Produce one visible result from the reference project.
+- Write down one adaptation you will make in Week 9.
 
-### Milestone 2: Prototype and evaluation {#milestone-2}
+### Week 9 · Milestone 2: Adapt, evaluate, and iterate {#milestone-2}
 
 - Reproducible notebook or application code.
 - At least one meaningful evaluation metric or test set.
 - One iteration based on evidence.
 - Short explanation of what improved and what did not.
 
-### Milestone 3: Deployment and showcase {#milestone-3}
+### Week 10 · Milestone 3: Package, explain, and showcase {#milestone-3}
 
 - Deployed demo. If deployment is not appropriate for the project, provide reproducible local run instructions and explain why.
 - README with problem, approach, data, evaluation, limitations, and setup.
 - Screenshots or a short demo video.
-- Two-minute presentation.
 - Resume-ready project description.
+- Give a two-minute presentation.
+- Show the main workflow from input to output.
+- Share one evaluation result and explain what it means.
+- Name one decision you would revisit with more time or better data.
+- Leave time for questions and feedback.
 
 ## Project quality checklist
 

@@ -23,6 +23,8 @@ Each project should produce a runnable notebook or demo, one plot or table, and 
 4. Week 4: [Reliable Data and Pipelines](https://colab.research.google.com/github/astarryknight/ai-ml/blob/main/notebooks/week-04-data-pipeline.ipynb) ([download](../../notebooks/week-04-data-pipeline.ipynb))
 5. Week 5: [Neural Networks for Loan Approval](https://colab.research.google.com/github/astarryknight/ai-ml/blob/main/notebooks/week-05-neural-networks.ipynb#scrollTo=9B0RhfLMXpdM) ([download](../../notebooks/week-05-neural-networks.ipynb)); learn how financial inputs become a practical approval prediction
 6. Week 6: **AI Agents** — content TBD; practice materials will be added here.
+7. Week 7: [Neural Network and Model Choice Review](https://colab.research.google.com/github/astarryknight/ai-ml/blob/main/notebooks/week-06-5-model-choice-lab.ipynb) ([download](../../notebooks/week-06-5-model-choice-lab.ipynb))
+8. Week 8: [Choose a Final Project Track](../final-project-tracks.html); reproduce one complete Kaggle pipeline, then make one evidence-based adaptation
 
 ## Extension projects
 
